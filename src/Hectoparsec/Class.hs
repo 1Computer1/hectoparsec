@@ -375,12 +375,12 @@ modifyInput :: MonadParser s e l m => (s -> s) -> m ()
 modifyInput f = getInput >>= putInput . f
 {-# INLINABLE modifyInput #-}
 
--- | Gets the stream offset.
+-- | Gets the position in the source text.
 getPos :: MonadParser s e l m => m Pos
 getPos = getsState statePos
 {-# INLINABLE getPos #-}
 
--- | Gets the stream offset.
+-- | Gets the offset in input stream.
 getOffset :: MonadParser s e l m => m Int
 getOffset = getsState stateOffset
 {-# INLINABLE getOffset #-}
