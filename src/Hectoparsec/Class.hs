@@ -40,7 +40,7 @@ module Hectoparsec.Class
     , unexpected
     , failure
     , customError
-      -- * General combinators
+      -- ** General combinators
     , restore
       -- ** State combinators
     , getsState
