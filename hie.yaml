@@ -1,0 +1,10 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:hectoparsec"
+    - path: "./test"
+      component: "test:hectoparsec-test"
+    - path: "./examples/csg"
+      component: "exe:hectoparsec-example-csg"
+    - path: "./examples/while"
+      component: "exe:hectoparsec-example-while"

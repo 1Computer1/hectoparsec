@@ -1,0 +1,13 @@
+/*
+comment here
+*/
+fn foo(x, y) {
+    if (x == y) {
+        return (z + x + y, 0);
+    } else {
+        return (z - x - y, 1);
+    }
+}
+
+let n = foo(2, 3);
+n = (n + 1) * 2; // cool stuff

@@ -1,0 +1,2 @@
+// this should say unexpected 1, expected a call (i.e. a paren), an operator, or a semicolon
+() 1;

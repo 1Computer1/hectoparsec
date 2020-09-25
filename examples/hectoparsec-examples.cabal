@@ -1,0 +1,65 @@
+cabal-version: 2.4
+name:          hectoparsec-examples
+version:       0.1.0.0
+synopsis:      Examples for Hectoparsec
+description:   Examples for Hectoparsec.
+homepage:      https://github.com/1Computer1/hectoparsec
+bug-reports:   https://github.com/1Computer1/hectoparsec/issues
+license:       MIT
+license-file:  LICENSE
+author:        comp
+maintainer:    onecomputer00@gmail.com
+copyright:     (c) 2020 comp
+category:      Parsing
+build-type:    Simple
+extra-doc-files:
+    README.md
+tested-with:
+    GHC == 8.10.1
+  , GHC == 8.8.3
+
+source-repository head
+  type:     git
+  location: https://github.com/1Computer1/hectoparsec.git
+
+common common-options
+  build-depends:
+      base >= 4.13 && < 5
+    , bytestring >= 0.10.9 && < 0.11
+    , containers >= 0.6.2 && < 0.7
+    , errata >= 0.1 && < 0.2
+    , hectoparsec
+    , mtl >= 2.2.2 && < 3
+    , parser-combinators >= 1 && < 2
+    , pretty-simple >= 3.3 && < 4
+    , text >= 1.2.3 && < 1.3
+    , transformers >= 0.5.6 && < 0.6
+  ghc-options:
+      -Wall
+      -Wcompat
+      -Widentities
+      -Wincomplete-uni-patterns
+      -Wincomplete-record-updates
+      -Wredundant-constraints
+      -Wpartial-fields
+      -Wno-unused-do-bind
+      -threaded
+      -rtsopts
+      -with-rtsopts=-N
+  default-language: Haskell2010
+
+executable hectoparsec-example-while
+  import:         common-options
+  hs-source-dirs: while
+  main-is:        Main.hs
+  other-modules:
+      Lexer
+      Parser
+
+executable hectoparsec-example-csg
+  import:         common-options
+  hs-source-dirs: csg
+  main-is:        Main.hs
+  other-modules:
+      Lexer
+      Parser

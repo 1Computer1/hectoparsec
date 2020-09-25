@@ -1,0 +1,5 @@
+// should error on constant condition
+// and should error on while loop
+while (1) {
+    let x = 1;
+}

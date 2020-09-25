@@ -1,0 +1,2 @@
+// should have a custom error for the brace
+() -> { 1 + 1 }

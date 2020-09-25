@@ -1,0 +1,3 @@
+// should say unexpected "return", expected "{"
+// also, constant condition
+if (1) return
