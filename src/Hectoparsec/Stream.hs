@@ -13,6 +13,28 @@ Stability   : stable
 Portability : portable
 
 Typeclass for manipulating input streams.
+
+By default, textual input streams are supported by Hectoparsec. Custom streams, like token lists or lexers can also
+made into a @'Stream'@:
+
+@
+import Data.Bifunctor (second)
+import Data.List (uncons)
+
+data Tok = Tok
+    { tokSpan  :: ('Pos', 'Pos') -- Start and end span of the token.
+    , tokValue :: String
+    }
+
+newtype TokStream = TokStream [Tok]
+
+instance 'Stream' TokStream where
+    type 'Token' TokStream = Tok
+    type 'Chunk' TokStream = [Tok]
+
+    'streamUncons' (TokStream xs) = second TokStream \<$> uncons xs
+    'updatePosToken' _ tok _ = snd (tokSpan tok)
+@
 -}
 module Hectoparsec.Stream
     ( -- * Stream typeclass
@@ -31,7 +53,7 @@ import           Hectoparsec.Pos
 
 {-|
 A 'Stream' represents an input stream. These streams can be acted on one token at a time, or with multiple tokens at
-a time in a chunk. Each token should represent a span of text in the source code.
+a time in a chunk. Each token should represent a span of text (possibly just a character) in the source code.
 -}
 class Stream s where
     -- | The token type. This is a single element in your stream.
