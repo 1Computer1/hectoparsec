@@ -169,3 +169,4 @@ main = do
     example "9-strange"
     example "10-end"
     example "11-block"
+    example "12-assign"

@@ -209,8 +209,8 @@ pExpr = pEqual <?> LabelExpression
         pMul = pBinOp [(TokTimes, OpMul), (TokDivide, OpDiv)] pAdd
         pAdd = pBinOp [(TokPlus, OpAdd), (TokMinus, OpSub)] pTerm
         pTerm = choice
-            [ pArrow -- This does not have a 'try' here. See 'pArrow' for why.
-            , try pAssign
+            [ pArrow  -- This does not have a 'try' here. See 'pArrow' for why.
+            , pAssign -- Similarly here.
             , pCall
             ]
 
@@ -280,8 +280,12 @@ pGrouped = do
 
 pAssign :: P (L Expr)
 pAssign = do
-    lhs <- pTokIdent
-    token TokEq
+    -- Same reasoning as the 'try' in 'pArrow'.
+    lhs <- try $ do
+        lhs <- pTokIdent
+        token TokEq
+        pure lhs
+
     rhs <- pExpr
     pure $ L (lspan lhs <> lspan rhs) (ExprAssign lhs rhs)
 
