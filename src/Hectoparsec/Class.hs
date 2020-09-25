@@ -93,7 +93,7 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     For matching by equality, use the derived 'string' combinator.
     -}
     matchTokens
-        :: -- | Length /n/ of the chunk to take. If /n/ <= 0, no characters are taken.
+        :: -- | Length /n/ of the chunk to take. If /n/ <= 0, no tokens are taken.
            Int
         -> -- | A function to match on the chunk. If the chunk is empty, then /n/ <= 0 or we are at the end.
            (Chunk s -> Either (ErrorItem s e l) a)
@@ -106,9 +106,9 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     For matching just by a predicate, use the derived 'tokenWhile' and 'tokenWhile1' combinators.
     -}
     matchTokenWhile
-        :: -- | The predicate to check characters.
+        :: -- | The predicate to check a token.
            (Token s -> Bool)
-        -> -- | A function to match on the string.
+        -> -- | A function to match on the chunk.
            (Chunk s -> Either (ErrorItem s e l) a)
         -> m a
 
@@ -118,7 +118,7 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     {-|
     Adds or removes a label for a parser. See 'label' and 'hidden' for more information.
 
-    By default, no parser defined in this library are labelled. It is entirely up to you to label parsers.
+    By default, no parsers defined in this library are labelled. It is entirely up to you to label parsers.
     -}
     withLabel :: Maybe l -> m a -> m a
 
@@ -197,7 +197,7 @@ char expected = matchToken $ \m ->
 {-|
 Parses a specific sequence of tokens. This fully backtracks, since it uses 'matchTokens'.
 
-> color = string "red" <|> string "green" <|> char "blue"
+> color = string "red" <|> string "green" <|> string "blue"
 -}
 string :: forall s e l m. (MonadParser s e l m, Eq (Chunk s)) => Chunk s -> m (Chunk s)
 string expected = matchTokens (chunkLength proxy expected) $ \ys ->
@@ -410,7 +410,7 @@ instance (Monoid w, MonadParser s e l m) => MonadParser s e l (M.AccumT w m) whe
     getState = lift getState
     putState = lift . putState
 
-instance (Monoid e', MonadParser s e l m) => MonadParser s e l (M.ExceptT e' m) where
+instance (Monoid err, MonadParser s e l m) => MonadParser s e l (M.ExceptT err m) where
     matchToken = lift . matchToken
     matchTokens = lift .: matchTokens
     matchTokenWhile = lift .: matchTokenWhile

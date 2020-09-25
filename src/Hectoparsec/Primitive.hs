@@ -51,6 +51,9 @@ in order to generate informational error messages.
 -}
 newtype ParserT s e l m a = ParserT { unParserT :: Continuations s e l m a }
 
+-- | The 'ParserT' type specialized to the 'Identity' monad.
+type Parser s e l = ParserT s e l Identity
+
 -- | Continuation for a successful parse.
 type ThenOk s l m a r = a -> [l] -> State s -> m r
 
@@ -95,13 +98,12 @@ contParserT p s = unParserT p s cok cerr uok uerr
         uerr e st  = return $ Reply st False (Left e)
 {-# INLINE contParserT #-}
 
--- | The 'ParserT' type specialized to the 'Identity' monad.
-type Parser s e l = ParserT s e l Identity
-
+-- | Lifts the underlying 'Semigroup' into the parser.
 instance Semigroup a => Semigroup (ParserT s e l m a) where
     p <> q = liftA2 (<>) p q
     {-# INLINE (<>) #-}
 
+-- | Lifts the underlying 'Monoid' into the parser.
 instance Monoid a => Monoid (ParserT s e l m a) where
     mempty = pure mempty
     {-# INLINE mempty #-}
@@ -123,6 +125,12 @@ instance Applicative (ParserT s e l m) where
         in unParserT p st pcok cerr puok uerr
     {-# INLINE (<*>) #-}
 
+{-|
+Allows for branching parsers.
+
+Note that @p '<|>' q@ will only try @q@ if @p@ fails and did not consume any input. For parsers @p@ that consume input,
+they can be backtracked to allow the next parser to be attempted using @'try' p@.
+-}
 instance Alternative (ParserT s e l m) where
     empty = ParserT $ \st _ _ _ uerr -> uerr (makeErrorAt st (ErrorItemLabels UnexpectedEmpty [])) st
     {-# INLINE empty #-}
@@ -149,72 +157,6 @@ instance Monad (ParserT s e l m) where
 instance MonadFail (ParserT s e l m) where
     fail msg = ParserT $ \st _ _ _ uerr -> uerr (makeErrorAt st $ ErrorItemFail msg) st
     {-# INLINE fail #-}
-
-instance MonadTrans (ParserT s e l) where
-    lift m = ParserT $ \st _ _ uok _ -> m >>= \a -> uok a [] st
-    {-# INLINE lift #-}
-
-instance MonadIO m => MonadIO (ParserT s e l m) where
-    liftIO m = lift (liftIO m)
-    {-# INLINE liftIO #-}
-
-instance MonadCont m => MonadCont (ParserT s e l m) where
-    callCC k =
-        makeParserT $ \st ->
-            callCC $ \c ->
-                contParserT (k $ \a -> makeParserT $ \st' -> c $ Reply st' False (Right a)) st
-    {-# INLINE callCC #-}
-
-instance MonadError e' m => MonadError e' (ParserT s e l m) where
-    throwError e = lift (throwError e)
-    {-# INLINE throwError #-}
-
-    catchError p h =
-        makeParserT $ \st ->
-            catchError (contParserT p st) $ \e ->
-                contParserT (h e) st
-    {-# INLINE catchError #-}
-
-instance MonadReader r m => MonadReader r (ParserT s e l m) where
-    ask = lift ask
-    {-# INLINE ask #-}
-
-    local f p = makeParserT $ \st -> local f (contParserT p st)
-    {-# INLINE local #-}
-
-instance MonadState st' m => MonadState st' (ParserT s e l m) where
-    get = lift get
-    {-# INLINE get #-}
-
-    put st = lift (put st)
-    {-# INLINE put #-}
-
-instance MonadWriter w m => MonadWriter w (ParserT s e l m) where
-    writer m = lift (writer m)
-    {-# INLINE writer #-}
-
-    tell m = lift (tell m)
-    {-# INLINE tell #-}
-
-    listen p = makeParserT $ \st -> over $ contParserT p st
-        where
-            over m = do
-                (rep, w) <- listen m
-                return $! case replyResult rep of
-                    Left e  -> rep { replyResult = Left e }
-                    Right a -> rep { replyResult = Right (a, w) }
-    {-# INLINE listen #-}
-
-    pass p = makeParserT $ \st -> over $ contParserT p st
-        where
-            over m = pass $ do
-                rep <- m
-                return $! case replyResult rep of
-                    Left e       -> (rep { replyResult = Left e }, id)
-                    Right (a, f) -> (rep { replyResult = Right a }, f)
-    {-# INLINE pass #-}
-
-instance MonadRWS r w st' m => MonadRWS r w st' (ParserT s e l m)
 
 instance Stream s => MonadParser s e l (ParserT s e l m) where
     matchToken match = ParserT $ \st@(State {..}) cok _ uok uerr ->
@@ -366,3 +308,69 @@ withErr ls1 k = \e st -> case e of
     ParseError p o (ErrorItemLabels unex ls2) -> k (ParseError p o (ErrorItemLabels unex (ls1 <> ls2))) st
     _ -> k e st
 {-# INLINE withErr #-}
+
+instance MonadTrans (ParserT s e l) where
+    lift m = ParserT $ \st _ _ uok _ -> m >>= \a -> uok a [] st
+    {-# INLINE lift #-}
+
+instance MonadIO m => MonadIO (ParserT s e l m) where
+    liftIO m = lift (liftIO m)
+    {-# INLINE liftIO #-}
+
+instance MonadCont m => MonadCont (ParserT s e l m) where
+    callCC k =
+        makeParserT $ \st ->
+            callCC $ \c ->
+                contParserT (k $ \a -> makeParserT $ \st' -> c $ Reply st' False (Right a)) st
+    {-# INLINE callCC #-}
+
+instance MonadError err m => MonadError err (ParserT s e l m) where
+    throwError e = lift (throwError e)
+    {-# INLINE throwError #-}
+
+    catchError p h =
+        makeParserT $ \st ->
+            catchError (contParserT p st) $ \e ->
+                contParserT (h e) st
+    {-# INLINE catchError #-}
+
+instance MonadReader r m => MonadReader r (ParserT s e l m) where
+    ask = lift ask
+    {-# INLINE ask #-}
+
+    local f p = makeParserT $ \st -> local f (contParserT p st)
+    {-# INLINE local #-}
+
+instance MonadState st m => MonadState st (ParserT s e l m) where
+    get = lift get
+    {-# INLINE get #-}
+
+    put st = lift (put st)
+    {-# INLINE put #-}
+
+instance MonadWriter w m => MonadWriter w (ParserT s e l m) where
+    writer m = lift (writer m)
+    {-# INLINE writer #-}
+
+    tell m = lift (tell m)
+    {-# INLINE tell #-}
+
+    listen p = makeParserT $ \st -> over $ contParserT p st
+        where
+            over m = do
+                (rep, w) <- listen m
+                return $! case replyResult rep of
+                    Left e  -> rep { replyResult = Left e }
+                    Right a -> rep { replyResult = Right (a, w) }
+    {-# INLINE listen #-}
+
+    pass p = makeParserT $ \st -> over $ contParserT p st
+        where
+            over m = pass $ do
+                rep <- m
+                return $! case replyResult rep of
+                    Left e       -> (rep { replyResult = Left e }, id)
+                    Right (a, f) -> (rep { replyResult = Right a }, f)
+    {-# INLINE pass #-}
+
+instance MonadRWS r w st m => MonadRWS r w st (ParserT s e l m)
