@@ -35,8 +35,9 @@ import Control.Monad.Error.Class
 import Control.Monad.IO.Class
 import Control.Monad.RWS.Class
 import Control.Monad.Trans
-import Data.Proxy
 import Data.Functor.Identity
+import Data.Proxy
+import Data.String
 import Hectoparsec.Class
 import Hectoparsec.Error
 import Hectoparsec.State
@@ -276,6 +277,11 @@ instance Stream s => MonadParser s e l (ParserT s e l m) where
 
     putState st = ParserT $ \_ _ _ uok _ -> uok () [] st
     {-# INLINE putState #-}
+
+-- | Allows for overloaded string literals to become parsers. This is equivalent to calling 'string'.
+instance (Stream s, IsString a, Eq a, a ~ Chunk s) => IsString (ParserT s e l m a) where
+    fromString xs = string (fromString xs)
+    {-# INLINE fromString #-}
 
 -- | Merges the labels from a parse error and the labels at some state together.
 merge :: ParseError s e l -> State s -> [l] -> [l]
