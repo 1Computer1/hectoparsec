@@ -132,10 +132,10 @@ class Stream s where
 
     By default, this converts the chunk to tokens, which may be inefficient.
 
-    @chunkNull proxy xs = 'chunkLength' proxy xs == 0@
+    @chunkNull proxy xs = null ('chunkToTokens' proxy xs)@
     -}
     chunkNull :: proxy s -> Chunk s -> Bool
-    chunkNull proxy xs = chunkLength proxy xs == 0
+    chunkNull proxy xs = null (chunkToTokens proxy xs)
     {-# INLINE chunkNull #-}
 
     {-|
