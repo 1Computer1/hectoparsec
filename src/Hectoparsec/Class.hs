@@ -126,12 +126,14 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     Backtracks a parser if it failed. This can be used for arbitrary lookahead.
 
     In the example below, @alt1@ will not act as expected, since @red@ will consume the \'r', meaning @rad@ will not
-    be tried. Adding 'try' in @alt2@ will allow it to work as expected.
+    be tried. Adding @try@ in @alt2@ will allow it to work as expected.
 
-    > red = char 'r' >> char 'e' >> char 'd'
-    > rad = char 'r' >> char 'a' >> char 'd'
-    > alt1 = red <|> rad
-    > alt2 = try red <|> rad
+@
+red = 'char' \'r' >> 'char' \'e' >> 'char' \'d'
+rad = 'char' \'r' >> 'char' \'a' >> 'char' \'d'
+alt1 = red \<|> rad
+alt2 = try red \<|> rad
+@
     -}
     try :: m a -> m a
 
@@ -184,7 +186,7 @@ anyToken = matchToken $ \m ->
 {-|
 Parses a specific token. Note that this parser is not labelled by default.
 
-> semicolon = char ';'
+@semicolon = char \';\'@
 -}
 char :: (MonadParser s e l m, Eq (Token s)) => Token s -> m (Token s)
 char expected = matchToken $ \m ->
@@ -198,7 +200,7 @@ char expected = matchToken $ \m ->
 Parses a specific sequence of tokens. This fully backtracks, since it uses 'matchTokens'. Note that this parser is not
 labelled by default.
 
-> color = string "red" <|> string "green" <|> string "blue"
+@color = string \"red\" \<|> string \"green\" \<|> string \"blue\"@
 -}
 string :: forall s e l m. (MonadParser s e l m, Eq (Chunk s)) => Chunk s -> m (Chunk s)
 string expected = matchTokens (chunkLength proxy expected) $ \ys ->
@@ -212,7 +214,7 @@ string expected = matchTokens (chunkLength proxy expected) $ \ys ->
 {-|
 Parses a token that satisfies a predicate.
 
-> digit = satisfy isDigit
+@digit = satisfy isDigit@
 -}
 satisfy :: MonadParser s e l m => (Token s -> Bool) -> m (Token s)
 satisfy p = matchToken $ \m ->
@@ -241,7 +243,7 @@ countTokens n = matchTokens n $ \ys ->
 Takes zero or more tokens that match a predicate. The resulting parser cannot fail. This fully backtracks,
 since it uses 'matchTokenWhile'. This should be more performant than using 'Control.Applicative.many' and 'satisfy'.
 
-> digits = tokenWhile isDigit
+@digits = tokenWhile isDigit@
 -}
 tokenWhile :: MonadParser s e l m => (Token s -> Bool) -> m (Chunk s)
 tokenWhile p = matchTokenWhile p Right
@@ -251,7 +253,7 @@ tokenWhile p = matchTokenWhile p Right
 Takes one or more tokens that match a predicate. This fully backtracks, since it uses 'matchTokenWhile'. This should
 be more performant than using 'Control.Applicative.some' and 'satisfy'.
 
-> digits1 = tokenWhile1 isDigit
+@digits1 = tokenWhile1 isDigit@
 -}
 tokenWhile1 :: forall s e l m. MonadParser s e l m => (Token s -> Bool) -> m (Chunk s)
 tokenWhile1 p = matchTokenWhile p $ \xs ->
@@ -272,7 +274,7 @@ Adds a label to a parser. This is used for labelling parsers that do not have on
 labelling a complex combination of parsers where you want to give it a more general label instead of merging the labels
 of each constituent parser.
 
-> label lbl p = withLabel (Just lbl) p
+@label lbl p = 'withLabel' (Just lbl) p@
 -}
 label :: MonadParser s e l m => l -> m a -> m a
 label lbl p = withLabel (Just lbl) p
@@ -287,7 +289,7 @@ p <?> lbl = label lbl p
 {-|
 Removes the label from a parser. This can be used to hide labels from errors.
 
-> hidden p = withLabel Nothing p
+@hidden p = 'withLabel' Nothing p@
 -}
 hidden :: MonadParser s e l m => m a -> m a
 hidden p = withLabel Nothing p
@@ -333,7 +335,7 @@ restore f p = do
 {-|
 Gets the parser state applied to a function.
 
-> getsState f = f <$> getState
+@getsState f = f \<$> 'getState'@
 -}
 getsState :: MonadParser s e l m => (State s -> a) -> m a
 getsState f = f <$> getState
@@ -342,7 +344,7 @@ getsState f = f <$> getState
 {-|
 Modifies the parser state by a function.
 
-> modifyState f = getState >>= putState . f
+@modifyState f = 'getState' >>= 'putState' . f@
 -}
 modifyState :: MonadParser s e l m => (State s -> State s) -> m ()
 modifyState f = getState >>= putState . f
@@ -356,7 +358,7 @@ getInput = getsState stateInput
 {-|
 Gets the input applied to a function.
 
-> getsInput f = f <$> getInput
+@getsInput f = f \<$> 'getInput'@
 -}
 getsInput :: MonadParser s e l m => (s -> a) -> m a
 getsInput f = getsState (f . stateInput)
@@ -370,7 +372,7 @@ putInput s = modifyState $ \st -> st { stateInput = s }
 {-|
 Modifies the input by a function.
 
-> modifyInput f = getInput >>= putInput . f
+@modifyInput f = 'getInput' >>= 'putInput' . f@
 -}
 modifyInput :: MonadParser s e l m => (s -> s) -> m ()
 modifyInput f = getInput >>= putInput . f

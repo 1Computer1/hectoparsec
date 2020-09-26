@@ -101,7 +101,7 @@ evalParserT
     -> m (Either (ParseError s e l) a)
 evalParserT p fp s = fmap snd $ runParserT p (initialState fp s)
 
--- | A variant of `evalParserT` that takes in an initial state and also gives the final state.
+-- | A variant of 'evalParserT' that takes in an initial state and also gives the final state.
 runParserT
     :: Monad m
     => ParserT s e l m a
@@ -121,7 +121,7 @@ evalParser
     -> Either (ParseError s e l) a
 evalParser p fp s = runIdentity $ evalParserT p fp s
 
--- | A variant of `evalParser` that takes in an initial state and also gives the final state.
+-- | A variant of 'evalParser' that takes in an initial state and also gives the final state.
 runParser
     :: Parser s e l a
     -> State s
