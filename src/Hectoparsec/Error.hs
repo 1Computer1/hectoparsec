@@ -31,11 +31,14 @@ data Unexpected s
     | UnexpectedEnd             -- ^ An unexpected end of input.
     | UnexpectedEmpty           -- ^ An unexpected empty parser.
 
--- | Chooses between two unexpected items. 'UnexpectedEmpty' items are discarded in favor of more descriptive items.
+{-|
+Chooses between two unexpected items. 'UnexpectedEmpty' items are discarded in favor of more descriptive items. When
+choosing between other items, the second item is chosen.
+-}
 instance Semigroup (Unexpected s) where
-    UnexpectedEmpty <> a = a
-    a <> UnexpectedEmpty = a
-    _ <> a = a
+    UnexpectedEmpty <> a               = a
+    a               <> UnexpectedEmpty = a
+    _               <> a               = a
 
 instance Monoid (Unexpected s) where
     mempty = UnexpectedEmpty
@@ -67,6 +70,21 @@ data ErrorItem s e l
       -}
     | ErrorItemCustom !e
 
+{-|
+Merges two error items. We prefer custom errors, unexpected items, then failures. When two 'ErrorItemLabels' are
+given, an unexpected item is selected and the labels are merged.
+-}
+instance Semigroup (ErrorItem s e l) where
+    _                       <> e@(ErrorItemCustom _)   = e
+    e@(ErrorItemCustom _)   <> _                       = e
+    ErrorItemLabels xu xd   <> ErrorItemLabels yu yd   = ErrorItemLabels (xu <> yu) (xd <> yd)
+    _                       <> e@(ErrorItemLabels _ _) = e
+    e@(ErrorItemLabels _ _) <> _                       = e
+    _                       <> e                       = e
+
+instance Monoid (ErrorItem s e l) where
+    mempty = ErrorItemLabels UnexpectedEmpty []
+
 deriving instance (Show (Token s), Show (Chunk s), Show e, Show l) => Show (ErrorItem s e l)
 deriving instance (Eq (Token s), Eq (Chunk s), Eq e, Eq l) => Eq (ErrorItem s e l)
 
@@ -81,21 +99,12 @@ deriving instance (Show (Token s), Show (Chunk s), Show e, Show l) => Show (Pars
 deriving instance (Eq (Token s), Eq (Chunk s), Eq e, Eq l) => Eq (ParseError s e l)
 
 {-|
-Merges two errors together. Errors that occur later in the stream are preferrred.
-
-When errors occur at the same place, we prefer custom errors, unexpected items, then failures.
+Merges two errors together. Errors that occur later in the stream are preferred. When they occur at the same place,
+the error items are merged, with preference for the second parse error.
 -}
 instance Semigroup (ParseError s e l) where
     x <> y = case compare (parseErrorOffset x) (parseErrorOffset y) of
         LT -> y
+        EQ -> y { parseErrorItem = parseErrorItem x <> parseErrorItem y }
         GT -> x
-        -- We prefer the second state when they are equal in offset.
-        EQ -> ParseError (parseErrorPos y) (parseErrorOffset y) $
-            case (parseErrorItem x, parseErrorItem y) of
-                (_, e@(ErrorItemCustom _)) -> e
-                (e@(ErrorItemCustom _), _) -> e
-                (ErrorItemLabels xunex xls, ErrorItemLabels yunex yls) -> ErrorItemLabels (xunex <> yunex) (xls <> yls)
-                (_, e@(ErrorItemLabels _ _)) -> e
-                (e@(ErrorItemLabels _ _), _) -> e
-                (_, e) -> e
     {-# INLINE (<>) #-}
