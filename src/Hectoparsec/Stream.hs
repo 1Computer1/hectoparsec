@@ -1,5 +1,6 @@
 {-# LANGUAGE BangPatterns        #-}
 {-# LANGUAGE DefaultSignatures   #-}
+{-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE FlexibleInstances   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies        #-}
@@ -44,11 +45,12 @@ module Hectoparsec.Stream
 import           Data.Bifunctor
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
-import           Data.Proxy
-import           Data.Word
+import           Data.Coerce
 import           Data.List
+import           Data.Proxy
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
+import           Data.Word
 import           Hectoparsec.Pos
 
 {-|
@@ -94,17 +96,25 @@ class Stream s where
 
             proxy = Proxy :: Proxy s
 
-    -- | Converts a chunk to tokens. This should be an isomorphism with 'tokensToChunk'.
+    {-|
+    Converts a chunk to tokens. This should be an isomorphism with 'tokensToChunk'.
+
+    The default implementation is available if the chunk and tokens are coercible.
+    -}
     chunkToTokens :: proxy s -> Chunk s -> [Token s]
 
-    default chunkToTokens :: Chunk s ~ [Token s] => proxy s -> Chunk s -> [Token s]
-    chunkToTokens _ x = x
+    default chunkToTokens :: Coercible (Chunk s) [Token s] => proxy s -> Chunk s -> [Token s]
+    chunkToTokens _ x = coerce x
 
-    -- | Converts tokens to a chunk. This should be an isomorphism with 'chunkToTokens'.
+    {-|
+    Converts tokens to a chunk. This should be an isomorphism with 'chunkToTokens'.
+
+    The default implementation is available if the chunk and tokens are coercible.
+    -}
     tokensToChunk :: proxy s -> [Token s] -> Chunk s
 
-    default tokensToChunk :: Chunk s ~ [Token s] => proxy s -> [Token s] -> Chunk s
-    tokensToChunk _ x = x
+    default tokensToChunk :: Coercible (Chunk s) [Token s] => proxy s -> [Token s] -> Chunk s
+    tokensToChunk _ x = coerce x
 
     {-|
     Gets the length of a chunk.
