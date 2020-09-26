@@ -16,7 +16,7 @@ Portability : portable
 Typeclass for manipulating input streams.
 
 By default, textual input streams are supported by Hectoparsec. Custom streams, like token lists or lexers can also
-made into a @'Stream'@:
+made into a @'Stream'@.
 
 @
 import Data.Bifunctor (second)

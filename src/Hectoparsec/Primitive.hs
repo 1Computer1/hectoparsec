@@ -47,8 +47,9 @@ import Hectoparsec.Stream
 The type of a parser for a stream @s@, using custom errors @e@ and custom labels @l@.
 
 If custom errors or custom labels are not needed, you can simply set it to 'Data.Void.Void' to ignore it. Generally,
-if your parser cannot error, you would do so. Otherwise, you should use 'String' or a custom data type for your labels
-in order to generate informational error messages.
+if your parser cannot error, you would do so. Otherwise, you should set the error and label types to something that
+would allow you to create useful error messages. In particular, labels are tracked in order to create a list of
+expected items whenever parsers fail.
 -}
 newtype ParserT s e l m a = ParserT { unParserT :: Continuations s e l m a }
 

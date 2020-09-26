@@ -9,12 +9,11 @@ Portability : portable
 Top-level module for Hectoparsec. These parsers are smart in keeping track of labels for parsers, which can be used
 to generate informational error messages. They also keep track of source positions, which can be attached to results.
 
-To get started, define a parser type for your specific usecase. A parser works over a certain input stream and possibly
-uses a custom error type and custom label type.
+To get started, define a parser type for your specific usecase. A parser works over a certain input stream and can
+use a custom error type or label type. Custom input streams can be used by implementing the 'Stream' typeclass.
 
 @
-module ColorParser where
-
+import Control.Applicative
 import Data.Text (Text)
 import Data.Void (Void)
 import Hectoparsec
@@ -33,7 +32,7 @@ blue  = Blue  \<$ 'string' \"blue\"  '<?>' \"blue\"
 color :: P Color
 color = red \<|> green \<|> blue
 
-parseColor :: FilePath -> 'Data.Text.Text' -> Either ('ParseError' Text Void String) Color
+parseColor :: FilePath -> Text -> Either ('ParseError' Text Void String) Color
 parseColor fp s = 'evalParser' (color <* 'endOfInput') fp s
 @
 -}

@@ -126,7 +126,7 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     Backtracks a parser if it failed. This can be used for arbitrary lookahead.
 
     In the example below, @alt1@ will not act as expected, since @red@ will consume the \'r', meaning @rad@ will not
-    be tried.
+    be tried. Adding 'try' in @alt2@ will allow it to work as expected.
 
     > red = char 'r' >> char 'e' >> char 'd'
     > rad = char 'r' >> char 'a' >> char 'd'
@@ -182,7 +182,7 @@ anyToken = matchToken $ \m ->
 {-# INLINABLE anyToken #-}
 
 {-|
-Parses a specific token.
+Parses a specific token. Note that this parser is not labelled by default.
 
 > semicolon = char ';'
 -}
@@ -195,7 +195,8 @@ char expected = matchToken $ \m ->
 {-# INLINABLE char #-}
 
 {-|
-Parses a specific sequence of tokens. This fully backtracks, since it uses 'matchTokens'.
+Parses a specific sequence of tokens. This fully backtracks, since it uses 'matchTokens'. Note that this parser is not
+labelled by default.
 
 > color = string "red" <|> string "green" <|> string "blue"
 -}
@@ -221,7 +222,7 @@ satisfy p = matchToken $ \m ->
         Nothing -> Left (ErrorItemLabels UnexpectedEnd [])
 {-# INLINABLE satisfy #-}
 
--- | Peeks at the next token.
+-- | Peeks at the next token, without advancing the stream in any way.
 peek :: MonadParser s e l m => m (Maybe (Token s))
 peek = fmap fst . streamUncons <$> getInput
 {-# INLINABLE peek #-}
@@ -261,7 +262,7 @@ tokenWhile1 p = matchTokenWhile p $ \xs ->
         proxy = Proxy :: Proxy s
 {-# INLINABLE tokenWhile1 #-}
 
--- | Consumes the rest of the input.
+-- | Consumes the rest of the input. This parser cannot fail, though the chunk may be empty.
 matchRest :: MonadParser s e l m => m (Chunk s)
 matchRest = tokenWhile (const True)
 {-# INLINABLE matchRest #-}
@@ -380,7 +381,7 @@ getPos :: MonadParser s e l m => m Pos
 getPos = getsState statePos
 {-# INLINABLE getPos #-}
 
--- | Gets the offset in input stream.
+-- | Gets the offset in the input stream.
 getOffset :: MonadParser s e l m => m Int
 getOffset = getsState stateOffset
 {-# INLINABLE getOffset #-}

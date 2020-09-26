@@ -11,8 +11,8 @@ Portability : portable
 
 Data types for errors reported during parsing.
 
-Hectoparsec itself does not come with error pretty printing, instead, it is recommended that you use it with the
-Errata (<https://hackage.haskell.org/package/errata>) library.
+Hectoparsec itself does not come with error pretty printing, but errors can be formatted while prototyping with the
+functions from "Hectoparsec.Debug". External libraries or your own error pretty printer can be used instead.
 -}
 module Hectoparsec.Error
     ( -- * Parse error data
