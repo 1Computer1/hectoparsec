@@ -77,7 +77,6 @@ instance Semigroup (ErrorItem s e l) where
     ErrorItemLabels xu xd   <> ErrorItemLabels yu yd   = ErrorItemLabels (xu <> yu) (xd <> yd)
     _                       <> e@(ErrorItemMessages _) = e
     e@(ErrorItemMessages _) <> _                       = e
-    _                       <> e                       = e
 
 deriving instance (Show (Token s), Show (Chunk s), Show e, Show l) => Show (ErrorItem s e l)
 deriving instance (Eq (Token s), Eq (Chunk s), Eq e, Eq l) => Eq (ErrorItem s e l)
