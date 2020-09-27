@@ -100,8 +100,9 @@ tokenF f = matchToken $ \m ->
         Nothing -> Left (ErrorItemLabels UnexpectedEnd [])
 
 reportWarning :: CustomError -> P ()
-reportWarning ei = do
-    e <- getsState . flip makeErrorAt . ErrorItemCustom $ ei
+reportWarning ce = do
+    st <- getState
+    let e = makeErrorAt st (ErrorItemMessages [MessageCustom ce])
     tell [e] -- Not super efficient, but it'll do.
 
 pModule :: P [L Stmt]

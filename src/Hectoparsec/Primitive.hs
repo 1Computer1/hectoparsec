@@ -157,7 +157,7 @@ instance Monad (ParserT s e l m) where
     {-# INLINE (>>=) #-}
 
 instance MonadFail (ParserT s e l m) where
-    fail msg = ParserT $ \st _ _ _ uerr -> uerr (makeErrorAt st $ ErrorItemFail msg) st
+    fail msg = ParserT $ \st _ _ _ uerr -> uerr (makeErrorAt st $ ErrorItemMessages [MessageFail msg]) st
     {-# INLINE fail #-}
 
 instance Stream s => MonadParser s e l (ParserT s e l m) where

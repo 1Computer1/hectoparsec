@@ -141,9 +141,6 @@ fmtE e = fullmsg
                 [ "    \x1b[90munexpected:\x1b[0m ", show unex, "\n"
                 , "    \x1b[90mexpected:\x1b[0m ", show ls
                 ]
-            ErrorItemCustom c -> concat
-                [ "    \x1b[90mcustom:\x1b[0m ", show c
-                ]
-            ErrorItemFail msg -> concat
-                [ "    \x1b[90mfail:\x1b[0m ", msg
+            ErrorItemMessages xs -> concat
+                [ "    \x1b[90mmessages:\x1b[0m ", show xs
                 ]

@@ -306,14 +306,14 @@ unexpected unex ls = do
 failure :: MonadParser s e l m => String -> m ()
 failure msg = do
     st <- getState
-    parseError (makeErrorAt st (ErrorItemFail msg))
+    parseError (makeErrorAt st (ErrorItemMessages [MessageFail msg]))
 {-# INLINABLE failure #-}
 
 -- | Fails parsing with a custom error.
 customError :: MonadParser s e l m => e -> m ()
 customError e = do
     st <- getState
-    parseError (makeErrorAt st (ErrorItemCustom e))
+    parseError (makeErrorAt st (ErrorItemMessages [MessageCustom e]))
 {-# INLINABLE customError #-}
 
 {-|

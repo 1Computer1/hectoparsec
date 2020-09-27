@@ -18,10 +18,10 @@ import           Parser
 -- Error printing with Errata --
 --------------------------------
 
-parseErrorErrata :: ParseError TokStream CustomError CustomLabel -> Errata
+parseErrorErrata :: ParseError TokStream CustomError CustomLabel -> [Errata]
 parseErrorErrata (ParseError pos _ ei) =
     case ei of
-        ErrorItemLabels (UnexpectedToken (L (Span fp (l1, c1) (l2, c2)) t)) ls -> errataSimple
+        ErrorItemLabels (UnexpectedToken (L (Span fp (l1, c1) (l2, c2)) t)) ls -> pure $ errataSimple
             (Just $ red "error: unexpected item")
             (blockMerged'
                 fancyRedStyle
@@ -31,8 +31,8 @@ parseErrorErrata (ParseError pos _ ei) =
                 Nothing
                 (Just $ makeMessage t ls))
             Nothing
-        -- There are other unexpected items, but we won't make those messages too pretty, for the sake of brevity.
-        ErrorItemLabels _ ls -> errataSimple
+        -- There are other unexpected items that we don't use, so we won't make those messages too pretty.
+        ErrorItemLabels _ ls -> pure $ errataSimple
             (Just $ red "error: unexpected item")
             (blockSimple'
                 fancyRedStyle
@@ -42,8 +42,8 @@ parseErrorErrata (ParseError pos _ ei) =
                 Nothing
                 (Just $ "expected " <> showLabels (nub $ sort ls)))
             Nothing
-        ErrorItemCustom e -> case e of
-            ErrorConstantCondition (L (Span fp (l1, c1) (l2, c2)) _) -> errataSimple
+        ErrorItemMessages xs -> flip map xs $ \m -> case m of
+            MessageCustom (ErrorConstantCondition (L (Span fp (l1, c1) (l2, c2)) _)) -> errataSimple
                 (Just $ yellow "warning: constant condition")
                 (blockMerged'
                     fancyYellowStyle
@@ -53,7 +53,7 @@ parseErrorErrata (ParseError pos _ ei) =
                     (Just $ yellow "this expression is always true")
                     Nothing)
                 Nothing
-            ErrorWhileLoop (L (Span fp (l1, c1) (l2, c2)) _) -> errataSimple
+            MessageCustom (ErrorWhileLoop (L (Span fp (l1, c1) (l2, c2)) _)) -> errataSimple
                 (Just $ yellow "warning: no while loops")
                 (blockMerged
                     fancyYellowStyle
@@ -63,7 +63,7 @@ parseErrorErrata (ParseError pos _ ei) =
                     (Just $ yellow "while loops are bad!")
                     Nothing)
                 Nothing
-            ErrorArrowBrace (L (Span fp (l1, c1) (l2, c2)) t) -> errataSimple
+            MessageCustom (ErrorArrowBrace (L (Span fp (l1, c1) (l2, c2)) t)) -> errataSimple
                 (Just $ red "error: unexpected item")
                 (blockMerged'
                     fancyRedStyle
@@ -73,16 +73,16 @@ parseErrorErrata (ParseError pos _ ei) =
                     (Just $ red "blocks are not supported in arrow functions")
                     (Just $ makeMessage t [LabelExpression]))
                 Nothing
-        ErrorItemFail msg -> errataSimple
-            (Just $ red "error: parse failure")
-            (blockSimple'
-                fancyRedStyle
-                (posFile pos)
-                (posLine pos)
-                (posColumn pos)
+            MessageFail msg -> errataSimple
+                (Just $ red "error: parse failure")
+                (blockSimple'
+                    fancyRedStyle
+                    (posFile pos)
+                    (posLine pos)
+                    (posColumn pos)
+                    Nothing
+                    (Just $ T.pack msg))
                 Nothing
-                (Just $ T.pack msg))
-            Nothing
     where
         makeMessage :: Tok -> [CustomLabel] -> T.Text
         makeMessage t ls = mconcat
@@ -151,9 +151,9 @@ example fp = do
                 pPrint x
                 unless (null warns) $ do
                     putStrLn ""
-                    TL.putStrLn $ prettyErrors src (parseErrorErrata <$> warns)
+                    TL.putStrLn $ prettyErrors src (parseErrorErrata =<< warns)
             (Left pe, warns) -> do
-                TL.putStrLn $ prettyErrors src (parseErrorErrata <$> (pe:warns))
+                TL.putStrLn $ prettyErrors src (parseErrorErrata =<< (pe:warns))
     putStrLn ""
 
 main :: IO ()
