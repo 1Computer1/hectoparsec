@@ -90,44 +90,6 @@ parseErrorErrata (ParseError pos _ ei) =
             , "expected ", showLabels (nub $ sort ls)
             ]
 
-        showLabels :: [CustomLabel] -> T.Text
-        showLabels [] = "nothing"
-        showLabels [x] = showLabel x
-        showLabels [x, y] = showLabel x <> " or " <> showLabel y
-        showLabels xs = T.intercalate ", " (map showLabel (init xs)) <> ", or " <> showLabel (last xs)
-
-        showLabel :: CustomLabel -> T.Text
-        showLabel h = case h of
-            LabelTok t      -> prettyTok t
-            LabelExpression -> "an expression"
-            LabelStatement  -> "a statement"
-            LabelIdent      -> "an identifier"
-            LabelInt        -> "an integer"
-            LabelStr        -> "a string"
-
-        prettyTok :: Tok -> T.Text
-        prettyTok t = case t of
-            TokIdent x -> x
-            TokKw x -> x
-            TokInt n -> T.pack (show n)
-            TokStr x -> "string \"" <> x <> "\""
-            TokArrow -> "`->`"
-            TokLBrace -> "`{`"
-            TokRBrace -> "`}`"
-            TokLParen -> "`(`"
-            TokRParen -> "`)`"
-            TokEqEq -> "`==`"
-            TokEq -> "`=`"
-            TokPlus -> "`+`"
-            TokMinus -> "`-`"
-            TokTimes -> "`*`"
-            TokDivide -> "`/`"
-            TokSemi -> "`;`"
-            TokComma -> "`,`"
-            TokEof -> "end of input"
-            TokEofComment -> "unterminated block comment"
-            TokUnknown c -> "`" <> T.singleton c <> "`"
-
         red :: T.Text -> T.Text
         red t = "\x1b[31m" <> t <> "\x1b[0m"
 

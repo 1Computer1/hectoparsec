@@ -4,6 +4,7 @@ module Lexer
     ( L(..)
     , Span(..)
     , Tok(..)
+    , prettyTok
     , Mode(..)
     , lexToken
     ) where
@@ -60,6 +61,19 @@ data Tok
     | TokEofComment
     | TokUnknown Char
     deriving (Show, Eq, Ord)
+
+prettyTok :: Tok -> T.Text
+prettyTok t = case t of
+    TokInt n -> T.pack (show n)
+    TokStr x -> "string \"" <> x <> "\""
+    TokLInterp -> "`$(`"
+    TokLParen -> "`(`"
+    TokRParen -> "`)`"
+    TokQuote -> "`\"`"
+    TokPlus -> "`+`"
+    TokEof -> "end of input"
+    TokEofComment -> "unterminated block comment"
+    TokUnknown c -> "`" <> T.singleton c <> "`"
 
 -------------
 -- Parsers --

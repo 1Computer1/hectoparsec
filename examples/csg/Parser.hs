@@ -5,6 +5,8 @@ module Parser
     ( Expr(..)
     , LexStream(..)
     , CustomLabel(..)
+    , showLabels
+    , showLabel
     , pExprTop
     ) where
 
@@ -55,6 +57,19 @@ data CustomLabel
     | LabelStr        -- ^ A label for literal strings.
     | LabelExpression -- ^ A label on the expression parser.
     deriving (Show, Eq, Ord)
+
+showLabels :: [CustomLabel] -> T.Text
+showLabels [] = "nothing"
+showLabels [x] = showLabel x
+showLabels [x, y] = showLabel x <> " or " <> showLabel y
+showLabels xs = T.intercalate ", " (map showLabel (init xs)) <> ", or " <> showLabel (last xs)
+
+showLabel :: CustomLabel -> T.Text
+showLabel h = case h of
+    LabelTok t -> prettyTok t
+    LabelExpression -> "an expression"
+    LabelInt -> "an integer"
+    LabelStr -> "a string"
 
 -- | Parser type with our lexer stream, no custom errors, and custom labels.
 type P = Parser LexStream Void CustomLabel

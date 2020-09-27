@@ -8,6 +8,8 @@ module Parser
     , TokStream(..)
     , CustomError(..)
     , CustomLabel(..)
+    , showLabels
+    , showLabel
     , pModule
     ) where
 
@@ -79,6 +81,21 @@ data CustomLabel
     | LabelExpression -- ^ A label for the expression parser.
     | LabelStatement  -- ^ A label for the statement parser.
     deriving (Show, Eq, Ord)
+
+showLabels :: [CustomLabel] -> T.Text
+showLabels [] = "nothing"
+showLabels [x] = showLabel x
+showLabels [x, y] = showLabel x <> " or " <> showLabel y
+showLabels xs = T.intercalate ", " (map showLabel (init xs)) <> ", or " <> showLabel (last xs)
+
+showLabel :: CustomLabel -> T.Text
+showLabel h = case h of
+    LabelTok t      -> prettyTok t
+    LabelExpression -> "an expression"
+    LabelStatement  -> "a statement"
+    LabelIdent      -> "an identifier"
+    LabelInt        -> "an integer"
+    LabelStr        -> "a string"
 
 -- | Parser type with token stream, custom errors, and custom labels.
 -- We also compose 'Writer' in order to report warnings during parsing.

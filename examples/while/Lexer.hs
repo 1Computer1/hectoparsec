@@ -4,6 +4,7 @@ module Lexer
     ( L(..)
     , Span(..)
     , Tok(..)
+    , prettyTok
     , lexer
     ) where
 
@@ -69,6 +70,29 @@ data Tok
     | TokEofComment   -- ^ This is for unterminated block comments.
     | TokUnknown Char -- ^ We have an unknown token to lex unknown characters. This means that the lexer cannot error.
     deriving (Show, Eq, Ord)
+
+prettyTok :: Tok -> T.Text
+prettyTok t = case t of
+    TokIdent x -> x
+    TokKw x -> x
+    TokInt n -> T.pack (show n)
+    TokStr x -> "string \"" <> x <> "\""
+    TokArrow -> "`->`"
+    TokLBrace -> "`{`"
+    TokRBrace -> "`}`"
+    TokLParen -> "`(`"
+    TokRParen -> "`)`"
+    TokEqEq -> "`==`"
+    TokEq -> "`=`"
+    TokPlus -> "`+`"
+    TokMinus -> "`-`"
+    TokTimes -> "`*`"
+    TokDivide -> "`/`"
+    TokSemi -> "`;`"
+    TokComma -> "`,`"
+    TokEof -> "end of input"
+    TokEofComment -> "unterminated block comment"
+    TokUnknown c -> "`" <> T.singleton c <> "`"
 
 -------------
 -- Parsers --
