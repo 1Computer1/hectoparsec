@@ -25,6 +25,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
         (blockMerged'
             fancyRedStyle
             fp
+            Nothing
             (l1, c1, Nothing)
             (l2, c2 - 1, Nothing)
             Nothing
@@ -36,9 +37,8 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
         (blockSimple'
             fancyRedStyle
             (posFile pos)
-            (posLine pos)
-            (posColumn pos)
             Nothing
+            (posLine pos, posColumn pos, Nothing)
             (Just $ "unexpected " <> T.pack (show u) <> "\nexpected " <> showLabels (nub $ sort ls)))
         Nothing
     ErrorItemMessages xs -> flip map xs $ \m -> case m of
@@ -47,9 +47,8 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
             (blockSimple'
                 fancyRedStyle
                 (posFile pos)
-                (posLine pos)
-                (posColumn pos)
                 Nothing
+                (posLine pos, posColumn pos, Nothing)
                 (Just $ T.pack msg))
             Nothing
         MessageCustom e -> absurd e

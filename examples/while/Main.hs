@@ -25,6 +25,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
         (blockMerged'
             fancyRedStyle
             fp
+            Nothing
             (l1, c1, Nothing)
             (l2, c2 - 1, Nothing)
             Nothing
@@ -36,9 +37,8 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
         (blockSimple'
             fancyRedStyle
             (posFile pos)
-            (posLine pos)
-            (posColumn pos)
             Nothing
+            (posLine pos, posColumn pos, Nothing)
             (Just $ "expected " <> showLabels (nub $ sort ls)))
         Nothing
     ErrorItemMessages xs -> flip map xs $ \m -> case m of
@@ -47,6 +47,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
             (blockMerged'
                 fancyYellowStyle
                 fp
+                Nothing
                 (l1, c1, Nothing)
                 (l2, c2 - 1, Just $ yellow "this expression is always true")
                 (Just $ yellow "this expression is always true")
@@ -57,6 +58,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
             (blockMerged
                 fancyYellowStyle
                 fp
+                Nothing
                 (l1, c1, c1 + 5, Nothing) -- To highlight the `while`, since we don't store its position.
                 (l2, c2 - 1, c2, Just $ yellow "while loops are bad!")
                 (Just $ yellow "while loops are bad!")
@@ -67,6 +69,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
             (blockMerged'
                 fancyRedStyle
                 fp
+                Nothing
                 (l1, c1, Nothing)
                 (l2, c2 - 1, Just $ red "blocks are not supported in arrow functions")
                 (Just $ red "blocks are not supported in arrow functions")
@@ -77,9 +80,8 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
             (blockSimple'
                 fancyRedStyle
                 (posFile pos)
-                (posLine pos)
-                (posColumn pos)
                 Nothing
+                (posLine pos, posColumn pos, Nothing)
                 (Just $ T.pack msg))
             Nothing
     where
