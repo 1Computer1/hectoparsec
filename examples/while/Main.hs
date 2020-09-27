@@ -19,70 +19,69 @@ import           Parser
 --------------------------------
 
 parseErrorErrata :: ParseError TokStream CustomError CustomLabel -> [Errata]
-parseErrorErrata (ParseError pos _ ei) =
-    case ei of
-        ErrorItemLabels (UnexpectedToken (L (Span fp (l1, c1) (l2, c2)) t)) ls -> pure $ errataSimple
+parseErrorErrata (ParseError pos _ ei) = case ei of
+    ErrorItemLabels (UnexpectedToken (L (Span fp (l1, c1) (l2, c2)) t)) ls -> pure $ errataSimple
+        (Just $ red "error: unexpected item")
+        (blockMerged'
+            fancyRedStyle
+            fp
+            (l1, c1, Nothing)
+            (l2, c2 - 1, Nothing)
+            Nothing
+            (Just $ makeMessage t ls))
+        Nothing
+    -- There are other unexpected items that we don't use, so we won't make those messages too pretty.
+    ErrorItemLabels _ ls -> pure $ errataSimple
+        (Just $ red "error: unexpected item")
+        (blockSimple'
+            fancyRedStyle
+            (posFile pos)
+            (posLine pos)
+            (posColumn pos)
+            Nothing
+            (Just $ "expected " <> showLabels (nub $ sort ls)))
+        Nothing
+    ErrorItemMessages xs -> flip map xs $ \m -> case m of
+        MessageCustom (ErrorConstantCondition (L (Span fp (l1, c1) (l2, c2)) _)) -> errataSimple
+            (Just $ yellow "warning: constant condition")
+            (blockMerged'
+                fancyYellowStyle
+                fp
+                (l1, c1, Nothing)
+                (l2, c2 - 1, Just $ yellow "this expression is always true")
+                (Just $ yellow "this expression is always true")
+                Nothing)
+            Nothing
+        MessageCustom (ErrorWhileLoop (L (Span fp (l1, c1) (l2, c2)) _)) -> errataSimple
+            (Just $ yellow "warning: no while loops")
+            (blockMerged
+                fancyYellowStyle
+                fp
+                (l1, c1, c1 + 5, Nothing) -- To highlight the `while`, since we don't store its position.
+                (l2, c2 - 1, c2, Just $ yellow "while loops are bad!")
+                (Just $ yellow "while loops are bad!")
+                Nothing)
+            Nothing
+        MessageCustom (ErrorArrowBrace (L (Span fp (l1, c1) (l2, c2)) t)) -> errataSimple
             (Just $ red "error: unexpected item")
             (blockMerged'
                 fancyRedStyle
                 fp
                 (l1, c1, Nothing)
-                (l2, c2 - 1, Nothing)
-                Nothing
-                (Just $ makeMessage t ls))
+                (l2, c2 - 1, Just $ red "blocks are not supported in arrow functions")
+                (Just $ red "blocks are not supported in arrow functions")
+                (Just $ makeMessage t [LabelExpression]))
             Nothing
-        -- There are other unexpected items that we don't use, so we won't make those messages too pretty.
-        ErrorItemLabels _ ls -> pure $ errataSimple
-            (Just $ red "error: unexpected item")
+        MessageFail msg -> errataSimple
+            (Just $ red "error: parse failure")
             (blockSimple'
                 fancyRedStyle
                 (posFile pos)
                 (posLine pos)
                 (posColumn pos)
                 Nothing
-                (Just $ "expected " <> showLabels (nub $ sort ls)))
+                (Just $ T.pack msg))
             Nothing
-        ErrorItemMessages xs -> flip map xs $ \m -> case m of
-            MessageCustom (ErrorConstantCondition (L (Span fp (l1, c1) (l2, c2)) _)) -> errataSimple
-                (Just $ yellow "warning: constant condition")
-                (blockMerged'
-                    fancyYellowStyle
-                    fp
-                    (l1, c1, Nothing)
-                    (l2, c2 - 1, Just $ yellow "this expression is always true")
-                    (Just $ yellow "this expression is always true")
-                    Nothing)
-                Nothing
-            MessageCustom (ErrorWhileLoop (L (Span fp (l1, c1) (l2, c2)) _)) -> errataSimple
-                (Just $ yellow "warning: no while loops")
-                (blockMerged
-                    fancyYellowStyle
-                    fp
-                    (l1, c1, c1 + 5, Nothing) -- To highlight the `while`, since we don't store its position.
-                    (l2, c2 - 1, c2, Just $ yellow "while loops are bad!")
-                    (Just $ yellow "while loops are bad!")
-                    Nothing)
-                Nothing
-            MessageCustom (ErrorArrowBrace (L (Span fp (l1, c1) (l2, c2)) t)) -> errataSimple
-                (Just $ red "error: unexpected item")
-                (blockMerged'
-                    fancyRedStyle
-                    fp
-                    (l1, c1, Nothing)
-                    (l2, c2 - 1, Just $ red "blocks are not supported in arrow functions")
-                    (Just $ red "blocks are not supported in arrow functions")
-                    (Just $ makeMessage t [LabelExpression]))
-                Nothing
-            MessageFail msg -> errataSimple
-                (Just $ red "error: parse failure")
-                (blockSimple'
-                    fancyRedStyle
-                    (posFile pos)
-                    (posLine pos)
-                    (posColumn pos)
-                    Nothing
-                    (Just $ T.pack msg))
-                Nothing
     where
         makeMessage :: Tok -> [CustomLabel] -> T.Text
         makeMessage t ls = mconcat

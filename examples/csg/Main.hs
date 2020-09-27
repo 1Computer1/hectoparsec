@@ -19,41 +19,40 @@ import           Parser
 --------------------------------
 
 parseErrorErrata :: ParseError LexStream Void CustomLabel -> [Errata]
-parseErrorErrata (ParseError pos _ ei) =
-    case ei of
-        ErrorItemLabels (UnexpectedToken (L (Span fp (l1, c1) (l2, c2)) t)) ls -> pure $ errataSimple
-            (Just $ red "error: unexpected item")
-            (blockMerged'
-                fancyRedStyle
-                fp
-                (l1, c1, Nothing)
-                (l2, c2 - 1, Nothing)
-                Nothing
-                (Just $ makeMessage t ls))
+parseErrorErrata (ParseError pos _ ei) = case ei of
+    ErrorItemLabels (UnexpectedToken (L (Span fp (l1, c1) (l2, c2)) t)) ls -> pure $ errataSimple
+        (Just $ red "error: unexpected item")
+        (blockMerged'
+            fancyRedStyle
+            fp
+            (l1, c1, Nothing)
+            (l2, c2 - 1, Nothing)
             Nothing
-        -- There are other unexpected items that we don't use, so we won't make those messages too pretty.
-        ErrorItemLabels u ls -> pure $ errataSimple
-            (Just $ red "error: unexpected item")
+            (Just $ makeMessage t ls))
+        Nothing
+    -- There are other unexpected items that we don't use, so we won't make those messages too pretty.
+    ErrorItemLabels u ls -> pure $ errataSimple
+        (Just $ red "error: unexpected item")
+        (blockSimple'
+            fancyRedStyle
+            (posFile pos)
+            (posLine pos)
+            (posColumn pos)
+            Nothing
+            (Just $ "unexpected " <> T.pack (show u) <> "\nexpected " <> showLabels (nub $ sort ls)))
+        Nothing
+    ErrorItemMessages xs -> flip map xs $ \m -> case m of
+        MessageFail msg -> errataSimple
+            (Just $ red "error: parse failure")
             (blockSimple'
                 fancyRedStyle
                 (posFile pos)
                 (posLine pos)
                 (posColumn pos)
                 Nothing
-                (Just $ "unexpected " <> T.pack (show u) <> "\nexpected " <> showLabels (nub $ sort ls)))
+                (Just $ T.pack msg))
             Nothing
-        ErrorItemMessages xs -> flip map xs $ \m -> case m of
-            MessageFail msg -> errataSimple
-                (Just $ red "error: parse failure")
-                (blockSimple'
-                    fancyRedStyle
-                    (posFile pos)
-                    (posLine pos)
-                    (posColumn pos)
-                    Nothing
-                    (Just $ T.pack msg))
-                Nothing
-            MessageCustom e -> absurd e
+        MessageCustom e -> absurd e
     where
         makeMessage :: Tok -> [CustomLabel] -> T.Text
         makeMessage t ls = mconcat
