@@ -308,21 +308,21 @@ hidden p = withLabel Nothing p
 {-# INLINABLE hidden #-}
 
 -- | Fails parsing with an unexpected item and a list of expected items.
-unexpected :: MonadParser s e l m => Unexpected s -> [l] -> m ()
+unexpected :: MonadParser s e l m => Unexpected s -> [l] -> m a
 unexpected unex ls = do
     st <- getState
     parseError (makeErrorAt st (ErrorItemLabels unex ls))
 {-# INLINABLE unexpected #-}
 
 -- | Fails parsing with a failure message. These errors are generally for broken invariants.
-failure :: MonadParser s e l m => String -> m ()
+failure :: MonadParser s e l m => String -> m a
 failure msg = do
     st <- getState
     parseError (makeErrorAt st (ErrorItemMessages [MessageFail msg]))
 {-# INLINABLE failure #-}
 
 -- | Fails parsing with a custom error.
-customError :: MonadParser s e l m => e -> m ()
+customError :: MonadParser s e l m => e -> m a
 customError e = do
     st <- getState
     parseError (makeErrorAt st (ErrorItemMessages [MessageCustom e]))
