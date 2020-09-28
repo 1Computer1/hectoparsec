@@ -59,20 +59,21 @@ module Hectoparsec
     , string
     , satisfy
     , peek
+    , peekNext
     , countTokens
     , tokenWhile
     , tokenWhile1
     , matchRest
+    , atEnd
       -- *** Label combinators
     , label
     , (<?>)
     , hidden
-      -- *** Error reporting
+      -- *** Error combinators
+    , restore
     , unexpected
     , failure
     , customError
-      -- *** General combinators
-    , restore
       -- *** State combinators
     , getsState
     , modifyState

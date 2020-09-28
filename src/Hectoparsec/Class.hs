@@ -28,20 +28,21 @@ module Hectoparsec.Class
     , string
     , satisfy
     , peek
+    , peekNext
     , countTokens
     , tokenWhile
     , tokenWhile1
     , matchRest
+    , atEnd
       -- ** Label combinators
     , label
     , (<?>)
     , hidden
-      -- ** Error reporting
+      -- ** Error combinators
+    , restore
     , unexpected
     , failure
     , customError
-      -- ** General combinators
-    , restore
       -- ** State combinators
     , getsState
     , modifyState
@@ -241,6 +242,18 @@ peek :: MonadParser s e l m => m (Maybe (Token s))
 peek = fmap fst . streamUncons <$> getInput
 {-# INLINABLE peek #-}
 
+{-|
+Peeks at the next token, without advancing the stream in any way. If the stream is empty (i.e. there is no next token),
+an unexpected end of input error is reported.
+-}
+peekNext :: MonadParser s e l m => m (Token s)
+peekNext = do
+    m <- streamUncons <$> getInput
+    case m of
+        Nothing -> unexpected UnexpectedEnd []
+        Just (x, _) -> pure x
+{-# INLINABLE peekNext #-}
+
 -- | Parses a chunk of length exactly /n/, not more, not less. This fully backtracks, since it uses 'matchTokens'.
 countTokens :: forall s e l m. MonadParser s e l m => Int -> m (Chunk s)
 countTokens n = matchTokens n $ \ys ->
@@ -281,6 +294,15 @@ matchRest :: MonadParser s e l m => m (Chunk s)
 matchRest = tokenWhile (const True)
 {-# INLINABLE matchRest #-}
 
+-- | A parser that tells whether we are at the end of the stream.
+atEnd :: MonadParser s e l m => m Bool
+atEnd = do
+    m <- streamUncons <$> getInput
+    case m of
+        Nothing -> pure False
+        Just _ -> pure True
+{-# INLINABLE atEnd #-}
+
 {-|
 Adds a label to a parser. This is used for labelling parsers that do not have one for better error messages, or for
 labelling a complex combination of parsers where you want to give it a more general label instead of merging the labels
@@ -307,6 +329,22 @@ hidden :: MonadParser s e l m => m a -> m a
 hidden p = withLabel Nothing p
 {-# INLINABLE hidden #-}
 
+{-|
+Restores the state to before using the parser if the error passes a predicate.
+
+The result parser still fails if the given parser fails.
+-}
+restore :: MonadParser s e l m => (ParseError s e l -> Bool) -> m a -> m a
+restore f p = do
+    st <- getState
+    r <- observing p
+    case r of
+        Right x -> pure x
+        Left e -> do
+            when (f e) $ putState st
+            parseError e
+{-# INLINABLE restore #-}
+
 -- | Fails parsing with an unexpected item and a list of expected items.
 unexpected :: MonadParser s e l m => Unexpected s -> [l] -> m a
 unexpected unex ls = do
@@ -327,22 +365,6 @@ customError e = do
     st <- getState
     parseError (makeErrorAt st (ErrorItemMessages [MessageCustom e]))
 {-# INLINABLE customError #-}
-
-{-|
-Restores the state to before using the parser if the error passes a predicate.
-
-The result parser still fails if the given parser fails.
--}
-restore :: MonadParser s e l m => (ParseError s e l -> Bool) -> m a -> m a
-restore f p = do
-    st <- getState
-    r <- observing p
-    case r of
-        Right x -> pure x
-        Left e -> do
-            when (f e) $ putState st
-            parseError e
-{-# INLINABLE restore #-}
 
 {-|
 Gets the parser state applied to a function.
