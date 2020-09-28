@@ -294,13 +294,13 @@ matchRest :: MonadParser s e l m => m (Chunk s)
 matchRest = tokenWhile (const True)
 {-# INLINABLE matchRest #-}
 
--- | A parser that tells whether we are at the end of the stream.
+-- | A parser that checks whether we are at the end of the stream.
 atEnd :: MonadParser s e l m => m Bool
 atEnd = do
     m <- streamUncons <$> getInput
     case m of
-        Nothing -> pure False
-        Just _ -> pure True
+        Nothing -> pure True
+        Just _ -> pure False
 {-# INLINABLE atEnd #-}
 
 {-|
