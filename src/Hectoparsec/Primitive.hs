@@ -50,19 +50,22 @@ If custom errors or custom labels are not needed, you can simply set it to 'Data
 if your parser cannot error, you would do so. Otherwise, you should set the error and label types to something that
 would allow you to create useful error messages. In particular, labels are tracked in order to create a list of
 expected items whenever parsers fail.
+
+'ParserT' implements 'MonadParser' for the primitive parser combinators, 'Alternative' for branching parsers, and the
+usual stack of 'Functor', 'Applicative', and 'Monad', along with the classes from @mtl@.
 -}
 newtype ParserT s e l m a = ParserT { unParserT :: Continuations s e l m a }
 
 -- | The 'ParserT' type specialized to the 'Identity' monad.
 type Parser s e l = ParserT s e l Identity
 
--- | Continuation for a successful parse.
+-- | Continuation for a successful parse. The labels are used for tracking what was expected.
 type ThenOk s l m a r = a -> [l] -> State s -> m r
 
 -- | Continuation for a failed parse.
 type ThenErr s e l m r = ParseError s e l -> State s -> m r
 
--- | Continuations for a parser.
+-- | Continuations for a parser. 'ParserT' uses this for performance reasons.
 type Continuations s e l m a =
     forall r
     .  State s
@@ -120,18 +123,19 @@ instance Applicative (ParserT s e l m) where
     {-# INLINE pure #-}
 
     p <*> q = ParserT $ \st cok cerr uok uerr ->
-        let pcok pa pl pst = unParserT q pst (cok . pa) cerr
-                (withOk pl (cok . pa)) (withErr pl cerr)
-            puok pa pl pst = unParserT q pst (cok . pa) cerr
-                (withOk pl (uok . pa)) (withErr pl uerr)
+        let pcok pa pl pst = unParserT q pst (cok . pa) cerr (withOk pl (cok . pa)) (withErr pl cerr)
+            puok pa pl pst = unParserT q pst (cok . pa) cerr (withOk pl (uok . pa)) (withErr pl uerr)
         in unParserT p st pcok cerr puok uerr
     {-# INLINE (<*>) #-}
 
 {-|
-Allows for branching parsers.
+Allows for branching parsers. The 'empty' parser will always fail.
 
 Note that @p '<|>' q@ will only try @q@ if @p@ fails and did not consume any input. For parsers @p@ that consume input,
 they can be backtracked to allow the next parser to be attempted using @'try' p@.
+
+In general, if any branch comsumes input, regardless of success, that branch will be commited to, and error messages
+will be based entirely on that branch.
 -}
 instance Alternative (ParserT s e l m) where
     empty = ParserT $ \st _ _ _ uerr -> uerr (makeErrorAt st (ErrorItemLabels UnexpectedEmpty [])) st
@@ -145,14 +149,13 @@ instance Alternative (ParserT s e l m) where
         in unParserT p st cok cerr uok puerr
     {-# INLINE (<|>) #-}
 
+-- | Equivalent to the 'Alternative' instance.
 instance MonadPlus (ParserT s e l m) where
 
 instance Monad (ParserT s e l m) where
     p >>= q = ParserT $ \st cok cerr uok uerr ->
-        let pcok pa pl pst = unParserT (q pa) pst cok cerr
-                (withOk pl cok) (withErr pl cerr)
-            puok pa pl pst = unParserT (q pa) pst cok cerr
-                (withOk pl uok) (withErr pl uerr)
+        let pcok pa pl pst = unParserT (q pa) pst cok cerr (withOk pl cok) (withErr pl cerr)
+            puok pa pl pst = unParserT (q pa) pst cok cerr (withOk pl uok) (withErr pl uerr)
         in unParserT p st pcok cerr puok uerr
     {-# INLINE (>>=) #-}
 

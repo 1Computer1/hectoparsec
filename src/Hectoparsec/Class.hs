@@ -74,10 +74,20 @@ import           Hectoparsec.Pos
 import           Hectoparsec.State
 import           Hectoparsec.Stream
 
--- | Monad @m@ that implements the primitive parsers for a stream @s@, using custom errors @e@ and custom labels @l@.
+{-|
+Monad @m@ that implements the primitive parsers for a stream @s@, using custom errors @e@ and custom labels @l@. These
+parsers should have a notion of whether the input was consumed or not. They should also track the parser state, errors,
+and labels.
+
+The 'MonadPlus' instance should be equal to the 'Control.Applicative.Alternative' instance, and it should implement the
+operations for branching parsers. In particular, @p 'Control.Applicative.<|>' q@ must commit to the first branch
+that consumes input.
+
+The 'Hectoparsec.ParserT' instance is the canonical instance for this class.
+-}
 class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     {-|
-    Match on a token, returning either the value or an error.
+    Match on a token, returning either the value or an error. If this succeeds, input is consumed.
 
     For matching by equality, use the derived 'char' combinator.
     -}
@@ -88,7 +98,7 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
 
     {-|
     Match on a chunk of at most /n/ length, returning either the value or an error. If it fails, the parser will
-    backtrack the stream.
+    backtrack the stream. If this succeeds and chunk is non-empty, input is consumed.
 
     For matching by equality, use the derived 'string' combinator.
     -}
@@ -101,7 +111,7 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
 
     {-|
     Take tokens that satisfy a predicate, and match on them, returning either the value or an error. If it fails,
-    the parser will backtrack the stream.
+    the parser will backtrack the stream. If this succeeds and the chunk is non-empty, input is consumed.
 
     For matching just by a predicate, use the derived 'tokenWhile' and 'tokenWhile1' combinators.
     -}
@@ -123,7 +133,8 @@ class (Stream s, MonadPlus m) => MonadParser s e l m | m -> s e l where
     withLabel :: Maybe l -> m a -> m a
 
     {-|
-    Backtracks a parser if it failed. This can be used for arbitrary lookahead.
+    Backtracks a parser if it failed. That is, if a parser @p@ fails, then @try p@ will be considered to not have
+    consumed input. This can be used for arbitrary lookahead.
 
     In the example below, @alt1@ will not act as expected, since @red@ will consume the \'r', meaning @rad@ will not
     be tried. Adding @try@ in @alt2@ will allow it to work as expected.
@@ -138,10 +149,11 @@ alt2 = try red \<|> rad
     try :: m a -> m a
 
     {-|
-    Backtracks a parser if it succeeds.
+    Backtracks a parser if it succeeds. That is, if a parser @p@ succeeds, then @lookahead p@ will be considered to not
+    have consumed input.
 
-    This does not affect the parser if it fails, i.e. failed parsers can still consume input. Use 'try' with
-    'lookahead' if you need to backtrack on failure too.
+    This does not affect the parser if it fails, i.e. failed parsers can still consume input. Use 'try' along with this
+    function if you need to backtrack on failure too.
     -}
     lookahead :: m a -> m a
 
