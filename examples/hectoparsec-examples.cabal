@@ -57,9 +57,9 @@ executable hectoparsec-example-while
       Lexer
       Parser
 
-executable hectoparsec-example-csg
+executable hectoparsec-example-interp
   import:         common-options
-  hs-source-dirs: csg
+  hs-source-dirs: interp
   main-is:        Main.hs
   other-modules:
       Lexer

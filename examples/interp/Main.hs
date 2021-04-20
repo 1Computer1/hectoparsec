@@ -68,7 +68,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
 
 example :: FilePath -> IO ()
 example fp = do
-    let fp' = "./examples/csg/files/" <> fp <> ".csg"
+    let fp' = "./examples/interp/files/" <> fp <> ".interp"
     putStrLn $ "\x1b[1mparsing " <> fp' <> ":\x1b[0m"
     src <- T.readFile fp'
     let ts = LexStream (initialState fp' src) [ModeExpr]
