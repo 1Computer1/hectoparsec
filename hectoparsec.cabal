@@ -19,8 +19,9 @@ extra-doc-files:
     README.md
     CHANGELOG.md
 tested-with:
-    GHC == 8.10.1
-  , GHC == 8.8.3
+    GHC == 9.0.1
+  , GHC == 8.10.4
+  , GHC == 8.8.4
 
 source-repository head
   type:     git
