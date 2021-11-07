@@ -9,7 +9,6 @@ import qualified Data.Text.Lazy.IO as TL
 import           Data.Void
 import           Errata
 import           Hectoparsec
-import           Text.Pretty.Simple
 
 import           Lexer
 import           Parser
@@ -73,7 +72,7 @@ example fp = do
     src <- T.readFile fp'
     let ts = LexStream (initialState fp' src) [ModeExpr]
     case evalParser pExprTop fp' ts of
-        Right x -> pPrint x
+        Right x -> print x
         Left pe -> TL.putStrLn $ prettyErrors src (parseErrorErrata pe)
     putStrLn ""
 

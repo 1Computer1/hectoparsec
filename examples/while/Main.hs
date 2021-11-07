@@ -9,7 +9,6 @@ import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy.IO as TL
 import           Errata
 import           Hectoparsec
-import           Text.Pretty.Simple
 
 import           Lexer
 import           Parser
@@ -111,7 +110,7 @@ example fp = do
         Left (ParseError p _ m) -> error $ "lexer errored at " <> show p <> ": " <> show m
         Right ts -> case runWriter (evalParserT pModule fp' (TokStream ts)) of
             (Right x, warns) -> do
-                pPrint x
+                print x
                 unless (null warns) $ do
                     putStrLn ""
                     TL.putStrLn $ prettyErrors src (parseErrorErrata =<< warns)
