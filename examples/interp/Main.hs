@@ -8,6 +8,7 @@ import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy.IO as TL
 import           Data.Void
 import           Errata
+import           Errata.Styles
 import           Hectoparsec
 
 import           Lexer
@@ -23,6 +24,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
         (Just $ red "error: unexpected item")
         (blockMerged'
             fancyRedStyle
+            fancyRedPointer
             fp
             Nothing
             (l1, c1, Nothing)
@@ -35,6 +37,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
         (Just $ red "error: unexpected item")
         (blockSimple'
             fancyRedStyle
+            fancyRedPointer
             (posFile pos)
             Nothing
             (posLine pos, posColumn pos, Nothing)
@@ -45,6 +48,7 @@ parseErrorErrata (ParseError pos _ ei) = case ei of
             (Just $ red "error: parse failure")
             (blockSimple'
                 fancyRedStyle
+                fancyRedPointer
                 (posFile pos)
                 Nothing
                 (posLine pos, posColumn pos, Nothing)

@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        cabal: ["3.4"]
-        ghc: ["8.8.4", "8.10.4", "9.0.1"]
+        cabal: ["latest"]
+        ghc: ["8.8", "8.10", "9.0", "9.2", "latest"]
     env:
       CONFIG: "--enable-tests"
     steps:
