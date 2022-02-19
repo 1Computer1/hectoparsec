@@ -215,7 +215,7 @@ instance Stream s => MonadParser s e l (ParserT s e l m) where
             Just _  -> uerr (makeErrorAt st (ErrorItemLabels UnexpectedEnd [])) st
     {-# INLINE endOfInput #-}
 
-    withLabel lbl p = ParserT $ \st@(State {..}) cok cerr uok uerr ->
+    withLabel lbl p = ParserT $ \st cok cerr uok uerr ->
         let pcok pa pl st' = case lbl of
                 -- We only want to be able to remove the last label.
                 -- If something was consumed, it does not make sense to replace the previous label.

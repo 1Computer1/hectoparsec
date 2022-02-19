@@ -15,7 +15,7 @@ module Parser
 
 import           Control.Monad.Combinators
 import           Control.Monad.Writer.Strict
-import           Data.List
+import           Data.List (uncons)
 import qualified Data.Text as T
 import           Hectoparsec
 

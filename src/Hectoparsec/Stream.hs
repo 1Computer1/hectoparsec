@@ -46,7 +46,7 @@ import           Data.Bifunctor
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 import           Data.Coerce
-import           Data.List
+import           Data.List (foldl', uncons)
 import           Data.Proxy
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
