@@ -135,7 +135,7 @@ The 'Hectoparsec.ParserT' instance is the canonical instance for this class.
 </span><span id="line-135"></span><span>
 </span><span id="line-136"></span><span>    </span><span class="hs-comment">{-|
     Backtracks a parser if it failed. That is, if a parser @p@ fails, then @try p@ will be considered to not have
-    consumed input. This can be used for arbitrary lookahead.
+    consumed input. This can be used for arbitrary look ahead.
 
     In the example below, @alt1@ will not act as expected, since @red@ will consume the \'r', meaning @rad@ will not
     be tried. Adding @try@ in @alt2@ will allow it to work as expected.
@@ -150,13 +150,13 @@ alt2 = try red \&lt;|&gt; rad
 </span><span id="line-150"></span><span>    </span><span id="try"><span class="annot"><a href="Hectoparsec.Class.html#try"><span class="hs-identifier hs-type">try</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679058979"><span class="annot"><a href="#local-6989586621679059283"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679058979"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679059283"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679058979"><span class="hs-identifier hs-type">a</span></a></span></span><span>
 </span><span id="line-151"></span><span>
 </span><span id="line-152"></span><span>    </span><span class="hs-comment">{-|
-    Backtracks a parser if it succeeds. That is, if a parser @p@ succeeds, then @lookahead p@ will be considered to not
+    Backtracks a parser if it succeeds. That is, if a parser @p@ succeeds, then @lookAhead p@ will be considered to not
     have consumed input.
 
     This does not affect the parser if it fails, i.e. failed parsers can still consume input. Use 'try' along with this
     function if you need to backtrack on failure too.
     -}</span><span>
-</span><span id="line-159"></span><span>    </span><span id="lookahead"><span class="annot"><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-type">lookahead</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679058497"><span class="annot"><a href="#local-6989586621679059283"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679058497"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679059283"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679058497"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-159"></span><span>    </span><span id="lookAhead"><span class="annot"><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-type">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679058497"><span class="annot"><a href="#local-6989586621679059283"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679058497"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679059283"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679058497"><span class="hs-identifier hs-type">a</span></a></span></span><span>
 </span><span id="line-160"></span><span>
 </span><span id="line-161"></span><span>    </span><span class="hs-comment">{-|
     Creates a parser that only succeeds if the original fails.
@@ -1036,15 +1036,15 @@ forall b c a1 a2. (b -&gt; c) -&gt; (a1 -&gt; a2 -&gt; b) -&gt; a1 -&gt; a2 -&gt
 </span><a href="Hectoparsec.Class.html#.%3A"><span class="hs-operator hs-var">.:</span></a></span><span> </span><span class="annot"><span class="annottext">AccumT w m a -&gt; w -&gt; m (a, w)
 forall w (m :: * -&gt; *) a. AccumT w m a -&gt; w -&gt; m (a, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.runAccumT</span></a></span><span>
-</span><span id="line-442"></span><span>    </span><span id="local-6989586621679058224"><span class="annot"><span class="annottext">lookahead :: forall a. AccumT w m a -&gt; AccumT w m a
-</span><a href="#local-6989586621679058224"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(w -&gt; m (a, w)) -&gt; AccumT w m a
+</span><span id="line-442"></span><span>    </span><span id="local-6989586621679058224"><span class="annot"><span class="annottext">lookAhead :: forall a. AccumT w m a -&gt; AccumT w m a
+</span><a href="#local-6989586621679058224"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(w -&gt; m (a, w)) -&gt; AccumT w m a
 forall w (m :: * -&gt; *) a. (w -&gt; m (a, w)) -&gt; AccumT w m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.AccumT</span></a></span><span> </span><span class="annot"><span class="annottext">((w -&gt; m (a, w)) -&gt; AccumT w m a)
 -&gt; (AccumT w m a -&gt; w -&gt; m (a, w)) -&gt; AccumT w m a -&gt; AccumT w m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; m (a, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
 -&gt; (AccumT w m a -&gt; w -&gt; m (a, w)) -&gt; AccumT w m a -&gt; w -&gt; m (a, w)
 forall b c a1 a2. (b -&gt; c) -&gt; (a1 -&gt; a2 -&gt; b) -&gt; a1 -&gt; a2 -&gt; c
 </span><a href="Hectoparsec.Class.html#.%3A"><span class="hs-operator hs-var">.:</span></a></span><span> </span><span class="annot"><span class="annottext">AccumT w m a -&gt; w -&gt; m (a, w)
@@ -1274,8 +1274,8 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">ExceptT err m a -&gt; m (Either err a)
 forall e (m :: * -&gt; *) a. ExceptT e m a -&gt; m (Either e a)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.runExceptT</span></a></span><span>
-</span><span id="line-457"></span><span>    </span><span id="local-6989586621679058140"><span class="annot"><span class="annottext">lookahead :: forall a. ExceptT err m a -&gt; ExceptT err m a
-</span><a href="#local-6989586621679058140"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (Either err a) -&gt; ExceptT err m a
+</span><span id="line-457"></span><span>    </span><span id="local-6989586621679058140"><span class="annot"><span class="annottext">lookAhead :: forall a. ExceptT err m a -&gt; ExceptT err m a
+</span><a href="#local-6989586621679058140"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (Either err a) -&gt; ExceptT err m a
 forall e (m :: * -&gt; *) a. m (Either e a) -&gt; ExceptT e m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.ExceptT</span></a></span><span> </span><span class="annot"><span class="annottext">(m (Either err a) -&gt; ExceptT err m a)
 -&gt; (ExceptT err m a -&gt; m (Either err a))
@@ -1284,7 +1284,7 @@ forall e (m :: * -&gt; *) a. m (Either e a) -&gt; ExceptT e m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (Either err a) -&gt; m (Either err a)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (Either err a) -&gt; m (Either err a))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (Either err a) -&gt; m (Either err a))
 -&gt; (ExceptT err m a -&gt; m (Either err a))
 -&gt; ExceptT err m a
 -&gt; m (Either err a)
@@ -1509,15 +1509,15 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">IdentityT m a -&gt; m a
 forall {k} (f :: k -&gt; *) (a :: k). IdentityT f a -&gt; f a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.runIdentityT</span></a></span><span>
-</span><span id="line-472"></span><span>    </span><span id="local-6989586621679058062"><span class="annot"><span class="annottext">lookahead :: forall a. IdentityT m a -&gt; IdentityT m a
-</span><a href="#local-6989586621679058062"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m a -&gt; IdentityT m a
+</span><span id="line-472"></span><span>    </span><span id="local-6989586621679058062"><span class="annot"><span class="annottext">lookAhead :: forall a. IdentityT m a -&gt; IdentityT m a
+</span><a href="#local-6989586621679058062"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m a -&gt; IdentityT m a
 forall {k} (f :: k -&gt; *) (a :: k). f a -&gt; IdentityT f a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.IdentityT</span></a></span><span> </span><span class="annot"><span class="annottext">(m a -&gt; IdentityT m a)
 -&gt; (IdentityT m a -&gt; m a) -&gt; IdentityT m a -&gt; IdentityT m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m a -&gt; m a
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m a -&gt; m a) -&gt; (IdentityT m a -&gt; m a) -&gt; IdentityT m a -&gt; m a
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m a -&gt; m a) -&gt; (IdentityT m a -&gt; m a) -&gt; IdentityT m a -&gt; m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">IdentityT m a -&gt; m a
 forall {k} (f :: k -&gt; *) (a :: k). IdentityT f a -&gt; f a
@@ -1707,15 +1707,15 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">MaybeT m a -&gt; m (Maybe a)
 forall (m :: * -&gt; *) a. MaybeT m a -&gt; m (Maybe a)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.runMaybeT</span></a></span><span>
-</span><span id="line-487"></span><span>    </span><span id="local-6989586621679057990"><span class="annot"><span class="annottext">lookahead :: forall a. MaybeT m a -&gt; MaybeT m a
-</span><a href="#local-6989586621679057990"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (Maybe a) -&gt; MaybeT m a
+</span><span id="line-487"></span><span>    </span><span id="local-6989586621679057990"><span class="annot"><span class="annottext">lookAhead :: forall a. MaybeT m a -&gt; MaybeT m a
+</span><a href="#local-6989586621679057990"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (Maybe a) -&gt; MaybeT m a
 forall (m :: * -&gt; *) a. m (Maybe a) -&gt; MaybeT m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.MaybeT</span></a></span><span> </span><span class="annot"><span class="annottext">(m (Maybe a) -&gt; MaybeT m a)
 -&gt; (MaybeT m a -&gt; m (Maybe a)) -&gt; MaybeT m a -&gt; MaybeT m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (Maybe a) -&gt; m (Maybe a)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (Maybe a) -&gt; m (Maybe a))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (Maybe a) -&gt; m (Maybe a))
 -&gt; (MaybeT m a -&gt; m (Maybe a)) -&gt; MaybeT m a -&gt; m (Maybe a)
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">MaybeT m a -&gt; m (Maybe a)
@@ -1952,8 +1952,8 @@ forall w r s (m :: * -&gt; *) a.
 Monoid w =&gt;
 RWST r w s m a -&gt; r -&gt; s -&gt; m (a, s, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">C.runRWST</span></a></span><span>
-</span><span id="line-502"></span><span>    </span><span id="local-6989586621679057901"><span class="annot"><span class="annottext">lookahead :: forall a. RWST r w st m a -&gt; RWST r w st m a
-</span><a href="#local-6989586621679057901"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a
+</span><span id="line-502"></span><span>    </span><span id="local-6989586621679057901"><span class="annot"><span class="annottext">lookAhead :: forall a. RWST r w st m a -&gt; RWST r w st m a
+</span><a href="#local-6989586621679057901"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a
 forall (m :: * -&gt; *) w r s a.
 (Functor m, Monoid w) =&gt;
 (r -&gt; s -&gt; m (a, s, w)) -&gt; RWST r w s m a
@@ -1964,7 +1964,7 @@ forall (m :: * -&gt; *) w r s a.
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, st, w) -&gt; m (a, st, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st, w) -&gt; m (a, st, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st, w) -&gt; m (a, st, w))
 -&gt; (RWST r w st m a -&gt; r -&gt; st -&gt; m (a, st, w))
 -&gt; RWST r w st m a
 -&gt; r
@@ -2235,8 +2235,8 @@ forall b c a1 a2 a3.
 forall r w s (m :: * -&gt; *) a.
 RWST r w s m a -&gt; r -&gt; s -&gt; m (a, s, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">L.runRWST</span></a></span><span>
-</span><span id="line-517"></span><span>    </span><span id="local-6989586621679057804"><span class="annot"><span class="annottext">lookahead :: forall a. RWST r w st m a -&gt; RWST r w st m a
-</span><a href="#local-6989586621679057804"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a
+</span><span id="line-517"></span><span>    </span><span id="local-6989586621679057804"><span class="annot"><span class="annottext">lookAhead :: forall a. RWST r w st m a -&gt; RWST r w st m a
+</span><a href="#local-6989586621679057804"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a
 forall r w s (m :: * -&gt; *) a.
 (r -&gt; s -&gt; m (a, s, w)) -&gt; RWST r w s m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">L.RWST</span></a></span><span> </span><span class="annot"><span class="annottext">((r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a)
@@ -2246,7 +2246,7 @@ forall r w s (m :: * -&gt; *) a.
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, st, w) -&gt; m (a, st, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st, w) -&gt; m (a, st, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st, w) -&gt; m (a, st, w))
 -&gt; (RWST r w st m a -&gt; r -&gt; st -&gt; m (a, st, w))
 -&gt; RWST r w st m a
 -&gt; r
@@ -2509,8 +2509,8 @@ forall b c a1 a2 a3.
 forall r w s (m :: * -&gt; *) a.
 RWST r w s m a -&gt; r -&gt; s -&gt; m (a, s, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">S.runRWST</span></a></span><span>
-</span><span id="line-532"></span><span>    </span><span id="local-6989586621679057718"><span class="annot"><span class="annottext">lookahead :: forall a. RWST r w st m a -&gt; RWST r w st m a
-</span><a href="#local-6989586621679057718"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a
+</span><span id="line-532"></span><span>    </span><span id="local-6989586621679057718"><span class="annot"><span class="annottext">lookAhead :: forall a. RWST r w st m a -&gt; RWST r w st m a
+</span><a href="#local-6989586621679057718"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a
 forall r w s (m :: * -&gt; *) a.
 (r -&gt; s -&gt; m (a, s, w)) -&gt; RWST r w s m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">S.RWST</span></a></span><span> </span><span class="annot"><span class="annottext">((r -&gt; st -&gt; m (a, st, w)) -&gt; RWST r w st m a)
@@ -2520,7 +2520,7 @@ forall r w s (m :: * -&gt; *) a.
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, st, w) -&gt; m (a, st, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st, w) -&gt; m (a, st, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st, w) -&gt; m (a, st, w))
 -&gt; (RWST r w st m a -&gt; r -&gt; st -&gt; m (a, st, w))
 -&gt; RWST r w st m a
 -&gt; r
@@ -2765,15 +2765,15 @@ forall b c a1 a2. (b -&gt; c) -&gt; (a1 -&gt; a2 -&gt; b) -&gt; a1 -&gt; a2 -&gt
 </span><a href="Hectoparsec.Class.html#.%3A"><span class="hs-operator hs-var">.:</span></a></span><span> </span><span class="annot"><span class="annottext">ReaderT r m a -&gt; r -&gt; m a
 forall r (m :: * -&gt; *) a. ReaderT r m a -&gt; r -&gt; m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.runReaderT</span></a></span><span>
-</span><span id="line-547"></span><span>    </span><span id="local-6989586621679057636"><span class="annot"><span class="annottext">lookahead :: forall a. ReaderT r m a -&gt; ReaderT r m a
-</span><a href="#local-6989586621679057636"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; m a) -&gt; ReaderT r m a
+</span><span id="line-547"></span><span>    </span><span id="local-6989586621679057636"><span class="annot"><span class="annottext">lookAhead :: forall a. ReaderT r m a -&gt; ReaderT r m a
+</span><a href="#local-6989586621679057636"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(r -&gt; m a) -&gt; ReaderT r m a
 forall r (m :: * -&gt; *) a. (r -&gt; m a) -&gt; ReaderT r m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">M.ReaderT</span></a></span><span> </span><span class="annot"><span class="annottext">((r -&gt; m a) -&gt; ReaderT r m a)
 -&gt; (ReaderT r m a -&gt; r -&gt; m a) -&gt; ReaderT r m a -&gt; ReaderT r m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m a -&gt; m a
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m a -&gt; m a)
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m a -&gt; m a)
 -&gt; (ReaderT r m a -&gt; r -&gt; m a) -&gt; ReaderT r m a -&gt; r -&gt; m a
 forall b c a1 a2. (b -&gt; c) -&gt; (a1 -&gt; a2 -&gt; b) -&gt; a1 -&gt; a2 -&gt; c
 </span><a href="Hectoparsec.Class.html#.%3A"><span class="hs-operator hs-var">.:</span></a></span><span> </span><span class="annot"><span class="annottext">ReaderT r m a -&gt; r -&gt; m a
@@ -2981,8 +2981,8 @@ forall b c a1 a2. (b -&gt; c) -&gt; (a1 -&gt; a2 -&gt; b) -&gt; a1 -&gt; a2 -&gt
 </span><a href="Hectoparsec.Class.html#.%3A"><span class="hs-operator hs-var">.:</span></a></span><span> </span><span class="annot"><span class="annottext">StateT st m a -&gt; st -&gt; m (a, st)
 forall s (m :: * -&gt; *) a. StateT s m a -&gt; s -&gt; m (a, s)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">L.runStateT</span></a></span><span>
-</span><span id="line-562"></span><span>    </span><span id="local-6989586621679057563"><span class="annot"><span class="annottext">lookahead :: forall a. StateT st m a -&gt; StateT st m a
-</span><a href="#local-6989586621679057563"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(st -&gt; m (a, st)) -&gt; StateT st m a
+</span><span id="line-562"></span><span>    </span><span id="local-6989586621679057563"><span class="annot"><span class="annottext">lookAhead :: forall a. StateT st m a -&gt; StateT st m a
+</span><a href="#local-6989586621679057563"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(st -&gt; m (a, st)) -&gt; StateT st m a
 forall s (m :: * -&gt; *) a. (s -&gt; m (a, s)) -&gt; StateT s m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">L.StateT</span></a></span><span> </span><span class="annot"><span class="annottext">((st -&gt; m (a, st)) -&gt; StateT st m a)
 -&gt; (StateT st m a -&gt; st -&gt; m (a, st))
@@ -2991,7 +2991,7 @@ forall s (m :: * -&gt; *) a. (s -&gt; m (a, s)) -&gt; StateT s m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, st) -&gt; m (a, st)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st) -&gt; m (a, st))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st) -&gt; m (a, st))
 -&gt; (StateT st m a -&gt; st -&gt; m (a, st))
 -&gt; StateT st m a
 -&gt; st
@@ -3231,8 +3231,8 @@ forall b c a1 a2. (b -&gt; c) -&gt; (a1 -&gt; a2 -&gt; b) -&gt; a1 -&gt; a2 -&gt
 </span><a href="Hectoparsec.Class.html#.%3A"><span class="hs-operator hs-var">.:</span></a></span><span> </span><span class="annot"><span class="annottext">StateT st m a -&gt; st -&gt; m (a, st)
 forall s (m :: * -&gt; *) a. StateT s m a -&gt; s -&gt; m (a, s)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">S.runStateT</span></a></span><span>
-</span><span id="line-577"></span><span>    </span><span id="local-6989586621679057483"><span class="annot"><span class="annottext">lookahead :: forall a. StateT st m a -&gt; StateT st m a
-</span><a href="#local-6989586621679057483"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(st -&gt; m (a, st)) -&gt; StateT st m a
+</span><span id="line-577"></span><span>    </span><span id="local-6989586621679057483"><span class="annot"><span class="annottext">lookAhead :: forall a. StateT st m a -&gt; StateT st m a
+</span><a href="#local-6989586621679057483"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(st -&gt; m (a, st)) -&gt; StateT st m a
 forall s (m :: * -&gt; *) a. (s -&gt; m (a, s)) -&gt; StateT s m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">S.StateT</span></a></span><span> </span><span class="annot"><span class="annottext">((st -&gt; m (a, st)) -&gt; StateT st m a)
 -&gt; (StateT st m a -&gt; st -&gt; m (a, st))
@@ -3241,7 +3241,7 @@ forall s (m :: * -&gt; *) a. (s -&gt; m (a, s)) -&gt; StateT s m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, st) -&gt; m (a, st)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st) -&gt; m (a, st))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, st) -&gt; m (a, st))
 -&gt; (StateT st m a -&gt; st -&gt; m (a, st))
 -&gt; StateT st m a
 -&gt; st
@@ -3475,8 +3475,8 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">WriterT w m a -&gt; m (a, w)
 forall w (m :: * -&gt; *) a. Monoid w =&gt; WriterT w m a -&gt; m (a, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">C.runWriterT</span></a></span><span>
-</span><span id="line-592"></span><span>    </span><span id="local-6989586621679057394"><span class="annot"><span class="annottext">lookahead :: forall a. WriterT w m a -&gt; WriterT w m a
-</span><a href="#local-6989586621679057394"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; WriterT w m a
+</span><span id="line-592"></span><span>    </span><span id="local-6989586621679057394"><span class="annot"><span class="annottext">lookAhead :: forall a. WriterT w m a -&gt; WriterT w m a
+</span><a href="#local-6989586621679057394"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; WriterT w m a
 forall (m :: * -&gt; *) w a.
 (Functor m, Monoid w) =&gt;
 m (a, w) -&gt; WriterT w m a
@@ -3485,7 +3485,7 @@ m (a, w) -&gt; WriterT w m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; m (a, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
 -&gt; (WriterT w m a -&gt; m (a, w)) -&gt; WriterT w m a -&gt; m (a, w)
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">WriterT w m a -&gt; m (a, w)
@@ -3706,15 +3706,15 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">WriterT w m a -&gt; m (a, w)
 forall w (m :: * -&gt; *) a. WriterT w m a -&gt; m (a, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">L.runWriterT</span></a></span><span>
-</span><span id="line-607"></span><span>    </span><span id="local-6989586621679057307"><span class="annot"><span class="annottext">lookahead :: forall a. WriterT w m a -&gt; WriterT w m a
-</span><a href="#local-6989586621679057307"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; WriterT w m a
+</span><span id="line-607"></span><span>    </span><span id="local-6989586621679057307"><span class="annot"><span class="annottext">lookAhead :: forall a. WriterT w m a -&gt; WriterT w m a
+</span><a href="#local-6989586621679057307"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; WriterT w m a
 forall w (m :: * -&gt; *) a. m (a, w) -&gt; WriterT w m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">L.WriterT</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; WriterT w m a)
 -&gt; (WriterT w m a -&gt; m (a, w)) -&gt; WriterT w m a -&gt; WriterT w m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; m (a, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
 -&gt; (WriterT w m a -&gt; m (a, w)) -&gt; WriterT w m a -&gt; m (a, w)
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">WriterT w m a -&gt; m (a, w)
@@ -3929,15 +3929,15 @@ forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">WriterT w m a -&gt; m (a, w)
 forall w (m :: * -&gt; *) a. WriterT w m a -&gt; m (a, w)
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">S.runWriterT</span></a></span><span>
-</span><span id="line-622"></span><span>    </span><span id="local-6989586621679057230"><span class="annot"><span class="annottext">lookahead :: forall a. WriterT w m a -&gt; WriterT w m a
-</span><a href="#local-6989586621679057230"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; WriterT w m a
+</span><span id="line-622"></span><span>    </span><span id="local-6989586621679057230"><span class="annot"><span class="annottext">lookAhead :: forall a. WriterT w m a -&gt; WriterT w m a
+</span><a href="#local-6989586621679057230"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; WriterT w m a
 forall w (m :: * -&gt; *) a. m (a, w) -&gt; WriterT w m a
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/transformers-0.5.6.2/src"><span class="hs-identifier hs-var">S.WriterT</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; WriterT w m a)
 -&gt; (WriterT w m a -&gt; m (a, w)) -&gt; WriterT w m a -&gt; WriterT w m a
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">m (a, w) -&gt; m (a, w)
 forall s e l (m :: * -&gt; *) a. MonadParser s e l m =&gt; m a -&gt; m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var">lookahead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var">lookAhead</span></a></span><span> </span><span class="annot"><span class="annottext">(m (a, w) -&gt; m (a, w))
 -&gt; (WriterT w m a -&gt; m (a, w)) -&gt; WriterT w m a -&gt; m (a, w)
 forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
 </span><a href="../file:///home/kp/.ghcup/ghc/9.2.1/share/doc/ghc-9.2.1/html/libraries/base-4.16.0.0/src"><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">WriterT w m a -&gt; m (a, w)

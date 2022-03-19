@@ -1166,8 +1166,8 @@ ParserT s e l m a -&gt; Continuations s e l m a
 </span><a href="#local-6989586621679059612"><span class="hs-identifier hs-var">puerr</span></a></span><span>
 </span><span id="line-254"></span><span>    </span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Hectoparsec.Class.html#try"><span class="hs-pragma hs-type">try</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
 </span><span id="line-255"></span><span>
-</span><span id="line-256"></span><span>    </span><span id="local-6989586621679059610"><span class="annot"><span class="annottext">lookahead :: forall a. ParserT s e l m a -&gt; ParserT s e l m a
-</span><a href="Hectoparsec.Class.html#lookahead"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookahead</span></a></span></span><span> </span><span id="local-6989586621679059608"><span class="annot"><span class="annottext">ParserT s e l m a
+</span><span id="line-256"></span><span>    </span><span id="local-6989586621679059610"><span class="annot"><span class="annottext">lookAhead :: forall a. ParserT s e l m a -&gt; ParserT s e l m a
+</span><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-identifier hs-var hs-var hs-var hs-var">lookAhead</span></a></span></span><span> </span><span id="local-6989586621679059608"><span class="annot"><span class="annottext">ParserT s e l m a
 </span><a href="#local-6989586621679059608"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Continuations s e l m a -&gt; ParserT s e l m a
 forall s e l (m :: * -&gt; *) a.
 Continuations s e l m a -&gt; ParserT s e l m a
@@ -1198,7 +1198,7 @@ ParserT s e l m a -&gt; Continuations s e l m a
 </span><a href="#local-6989586621679059606"><span class="hs-identifier hs-var">cerr</span></a></span><span> </span><span class="annot"><span class="annottext">ThenOk s l m a r
 </span><a href="#local-6989586621679059603"><span class="hs-identifier hs-var">puok</span></a></span><span> </span><span class="annot"><span class="annottext">ThenErr s e l m r
 </span><a href="#local-6989586621679059604"><span class="hs-identifier hs-var">uerr</span></a></span><span>
-</span><span id="line-259"></span><span>    </span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Hectoparsec.Class.html#lookahead"><span class="hs-pragma hs-type">lookahead</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
+</span><span id="line-259"></span><span>    </span><span class="hs-pragma">{-# INLINE</span><span> </span><span class="annot"><a href="Hectoparsec.Class.html#lookAhead"><span class="hs-pragma hs-type">lookAhead</span></a></span><span> </span><span class="hs-pragma">#-}</span><span>
 </span><span id="line-260"></span><span>
 </span><span id="line-261"></span><span>    </span><span id="local-6989586621679059601"><span class="annot"><span class="annottext">notFollowedBy :: forall a. ParserT s e l m a -&gt; ParserT s e l m ()
 </span><a href="Hectoparsec.Class.html#notFollowedBy"><span class="hs-identifier hs-var hs-var hs-var hs-var">notFollowedBy</span></a></span></span><span> </span><span id="local-6989586621679059599"><span class="annot"><span class="annottext">ParserT s e l m a
