@@ -122,17 +122,22 @@ instance Applicative (ParserT s e l m) where
     pure a = ParserT $ \st _ _ uok _ -> uok a [] st
     {-# INLINE pure #-}
 
-    p <*> q = ap p q
+    p <*> q = ParserT $ \st cok cerr uok uerr ->
+        let pcok pa pl pst
+                | null pl   = unParserT q pst (cok . pa) cerr (cok . pa) cerr
+                | otherwise = unParserT q pst (cok . pa) cerr (withOk pl (cok . pa)) (withErr pl cerr)
+            puok pa pl pst
+                | null pl   = unParserT q pst (cok . pa) cerr (uok . pa) uerr
+                | otherwise = unParserT q pst (cok . pa) cerr (withOk pl (uok . pa)) (withErr pl uerr)
+        in unParserT p st pcok cerr puok uerr
     {-# INLINE (<*>) #-}
 
     p *> q = p >>= const q
-    {-# INLINE (*>) #-}
 
     p <* q = do
         x <- p
         void q
         pure x
-    {-# INLINE (<*) #-}
 
 {-|
 Allows for branching parsers. The 'empty' parser will always fail.
