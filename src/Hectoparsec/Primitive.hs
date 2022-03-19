@@ -77,9 +77,9 @@ type Continuations s e l m a =
 
 -- | The reply after parsing.
 data Reply s e l a = Reply
-    { replyState    :: !(State s)                  -- ^ Resulting state.
-    , replyConsumed :: Bool                        -- ^ Whether the parser consumed or not.
-    , replyResult   :: Either (ParseError s e l) a -- ^ Either the error or result value.
+    { replyState    :: !(State s)                     -- ^ Resulting state.
+    , replyConsumed :: !Bool                          -- ^ Whether the parser consumed or not.
+    , replyResult   :: !(Either (ParseError s e l) a) -- ^ Either the error or result value.
     }
 
 -- | Creates a parser based on a reply.
@@ -97,10 +97,10 @@ makeParserT r = ParserT $ \st cok cerr uok uerr -> do
 contParserT :: Monad m => ParserT s e l m a -> State s -> m (Reply s e l a)
 contParserT p s = unParserT p s cok cerr uok uerr
     where
-        cok a _ st = return $ Reply st True (Right a)
-        cerr e st  = return $ Reply st True (Left e)
-        uok a _ st = return $ Reply st False (Right a)
-        uerr e st  = return $ Reply st False (Left e)
+        cok a _ st = pure $ Reply st True (Right a)
+        cerr e st  = pure $ Reply st True (Left e)
+        uok a _ st = pure $ Reply st False (Right a)
+        uerr e st  = pure $ Reply st False (Left e)
 {-# INLINE contParserT #-}
 
 -- | Lifts the underlying 'Semigroup' into the parser.
@@ -122,11 +122,17 @@ instance Applicative (ParserT s e l m) where
     pure a = ParserT $ \st _ _ uok _ -> uok a [] st
     {-# INLINE pure #-}
 
-    p <*> q = ParserT $ \st cok cerr uok uerr ->
-        let pcok pa pl pst = unParserT q pst (cok . pa) cerr (withOk pl (cok . pa)) (withErr pl cerr)
-            puok pa pl pst = unParserT q pst (cok . pa) cerr (withOk pl (uok . pa)) (withErr pl uerr)
-        in unParserT p st pcok cerr puok uerr
+    p <*> q = ap p q
     {-# INLINE (<*>) #-}
+
+    p *> q = p >>= const q
+    {-# INLINE (*>) #-}
+
+    p <* q = do
+        x <- p
+        void q
+        pure x
+    {-# INLINE (<*) #-}
 
 {-|
 Allows for branching parsers. The 'empty' parser will always fail.
@@ -154,8 +160,12 @@ instance MonadPlus (ParserT s e l m) where
 
 instance Monad (ParserT s e l m) where
     p >>= q = ParserT $ \st cok cerr uok uerr ->
-        let pcok pa pl pst = unParserT (q pa) pst cok cerr (withOk pl cok) (withErr pl cerr)
-            puok pa pl pst = unParserT (q pa) pst cok cerr (withOk pl uok) (withErr pl uerr)
+        let pcok pa pl pst
+                | null pl   = unParserT (q pa) pst cok cerr cok cerr
+                | otherwise = unParserT (q pa) pst cok cerr (withOk pl cok) (withErr pl cerr)
+            puok pa pl pst
+                | null pl   = unParserT (q pa) pst cok cerr uok uerr
+                | otherwise = unParserT (q pa) pst cok cerr (withOk pl uok) (withErr pl uerr)
         in unParserT p st pcok cerr puok uerr
     {-# INLINE (>>=) #-}
 
