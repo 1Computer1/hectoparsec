@@ -253,10 +253,10 @@ instance Stream s => MonadParser s e l (ParserT s e l m) where
         in unParserT p st cok puerr uok puerr
     {-# INLINE try #-}
 
-    lookahead p = ParserT $ \st _ cerr uok uerr ->
+    lookAhead p = ParserT $ \st _ cerr uok uerr ->
         let puok pa _ _ = uok pa [] st
         in unParserT p st puok cerr puok uerr
-    {-# INLINE lookahead #-}
+    {-# INLINE lookAhead #-}
 
     notFollowedBy p = ParserT $ \st _ _ uok uerr ->
         let puok _ _ _ =
